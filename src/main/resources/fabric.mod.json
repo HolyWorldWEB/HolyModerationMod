@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "holymoderation",
+  "version": "${version}",
+  "name": "§6§lHolyModeration",
+  "description": "Мод-помощник для состава модерации HolyWorld\nКоманда /hm",
+  "authors": ["zyouime13"],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/holymoderation/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "me.zyouime.holymoderation.Main"
+    ],
+    "modmenu": [
+      "me.zyouime.holymoderation.modmenu.ModMenuImpl"
+    ]
+  },
+  "mixins": [
+    "holymoderation.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "HW Moderation Telegram": "https://t.me/HWmoderation"
+      }
+    }
+  }
+}

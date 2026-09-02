@@ -1,0 +1,22 @@
+{
+  "click": {
+    "sounds": [
+      "holymoderation:click"
+    ]
+  },
+  "on": {
+    "sounds": [
+      "holymoderation:on"
+    ]
+  },
+  "off": {
+    "sounds": [
+      "holymoderation:off"
+    ]
+  },
+  "gui_open": {
+    "sounds": [
+      "holymoderation:gui_open"
+    ]
+  }
+}
