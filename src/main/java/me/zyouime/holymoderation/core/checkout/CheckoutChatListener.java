@@ -17,6 +17,10 @@ public record CheckoutChatListener(CheckoutService checkoutService, BanReasonLoo
         if (checkoutService.isAwaitingFreeze()) {
             handleFreezeResponse(text);
         }
+        if (checkoutService.isChecking() && HolyWorldPatterns.isFreezeLeave(text, checkoutService.suspect())) {
+            checkoutService.onSuspectLeft();
+            return ActionResult.PASS;
+        }
         if (settings.autoAnyDesk.getValue() && checkoutService.isChecking()) {
             anyDeskExtractor.inspect(text, checkoutService.suspect());
         }

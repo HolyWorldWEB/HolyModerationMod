@@ -16,8 +16,8 @@ public final class CheckoutService {
 
     private static final int TICKS_PER_SECOND = 20;
     private static final int SEND_TEXTS_TICK = TICKS_PER_SECOND * 5;
-    private static final int GATHER_INFO_TICK = TICKS_PER_SECOND * 8;
-    private static final int JOURNAL_PROMPT_TICK = TICKS_PER_SECOND * 9;
+    private static final int GATHER_INFO_TICK = TICKS_PER_SECOND * 6;
+    private static final int JOURNAL_PROMPT_TICK = TICKS_PER_SECOND * 7;
     private static final int FREEZE_TIMEOUT_TICKS = TICKS_PER_SECOND * 5;
     private static final int END_PROMPT_DELAY_TICKS = TICKS_PER_SECOND;
     private final UserState userState;
@@ -68,25 +68,41 @@ public final class CheckoutService {
         }
         session = new CheckoutSession(player);
         chatService.chatMessage("/freezing %s".formatted(player));
-        if (settings.autoCheckoutTp.getValue()) {
-            chatService.chatMessage("/warp logo");
-        }
-        chatService.chatMessage("/prova");
-        notifications.success("Вы успешно начали проверку.");
-        CheckoutEvents.STARTED.invoker().onStarted(player);
     }
 
     public void finish() {
-        finish(true, true);
+        if (session == null) {
+            return;
+        }
+        String suspect = endSession(true);
+        notifications.success("Вы успешно закончили проверку.");
+        scheduleEndPrompt(suspect);
     }
 
     public void finishAfterBan() {
-        finish(false, true);
+        if (session == null) {
+            return;
+        }
+        String suspect = endSession(false);
+        notifications.success("Вы успешно закончили проверку.");
+        scheduleEndPrompt(suspect);
     }
 
     public void cancelPlayerNotFound() {
-        finish(false, false);
+        if (session == null) {
+            return;
+        }
+        endSession(false);
         notifications.warning("Проверка отменена, потому что игрок не был найден.");
+    }
+
+    public void onSuspectLeft() {
+        if (session == null) {
+            return;
+        }
+        String suspect = endSession(false);
+        notifications.warning("Игрок %s вышел с проверки. Проверка завершена.".formatted(suspect));
+        scheduleEndPrompt(suspect);
     }
 
     public void sendTexts(String player) {
@@ -105,14 +121,15 @@ public final class CheckoutService {
     }
 
     public void onFreezeConfirmed() {
-        if (session == null) {
+        if (session == null || !session.isAwaitingFreeze()) {
             return;
         }
         session.freezeAnswered();
+        beginCheckout();
     }
 
     public void onFreezeFailed() {
-        if (session == null) {
+        if (session == null || !session.isAwaitingFreeze()) {
             return;
         }
         session.freezeAnswered();
@@ -126,24 +143,39 @@ public final class CheckoutService {
         textSender.cancel();
     }
 
-    private void finish(boolean sendUnfreeze, boolean showPrompt) {
-        if (session == null) {
-            return;
-        }
+    private void beginCheckout() {
         String suspect = session.getSuspect();
+        session.markStarted();
+        if (settings.autoCheckoutTp.getValue()) {
+            chatService.chatMessage("/warp logo");
+        }
         chatService.chatMessage("/prova");
+        notifications.success("Вы успешно начали проверку.");
+        CheckoutEvents.STARTED.invoker().onStarted(suspect);
+    }
+
+    private String endSession(boolean sendUnfreeze) {
+        String suspect = session.getSuspect();
+        boolean started = session.isStarted();
+        if (started) {
+            chatService.chatMessage("/prova");
+        }
         if (sendUnfreeze) {
             chatService.chatMessage("/freezing %s".formatted(suspect));
         }
-        restoreModeratorState();
+        if (started) {
+            restoreModeratorState();
+        }
         stopSpyingSuspect(suspect);
         session = null;
         textSender.cancel();
-        CheckoutEvents.FINISHED.invoker().onFinished(suspect);
-        if (!showPrompt) {
-            return;
+        if (started) {
+            CheckoutEvents.FINISHED.invoker().onFinished(suspect);
         }
-        notifications.success("Вы успешно закончили проверку.");
+        return suspect;
+    }
+
+    private void scheduleEndPrompt(String suspect) {
         endPromptSuspect = suspect;
         ticksUntilEndPrompt = END_PROMPT_DELAY_TICKS;
     }
@@ -155,6 +187,9 @@ public final class CheckoutService {
         session.tick();
         if (session.waitedLongerThan(FREEZE_TIMEOUT_TICKS)) {
             session.freezeAnswered();
+            notifications.warning("Сервер не подтвердил заморозку. Проверка продолжена, проверьте состояние игрока вручную.");
+            beginCheckout();
+            return;
         }
         if (session.isAtTick(SEND_TEXTS_TICK)) {
             sendTexts(session.getSuspect());
@@ -207,9 +242,7 @@ public final class CheckoutService {
     }
 
     private void stopSpyingSuspect(String suspect) {
-        boolean spyingSuspect = spyService.session()
-                .map(spy -> spy.getPlayer().equalsIgnoreCase(suspect))
-                .orElse(false);
+        boolean spyingSuspect = spyService.session().map(spy -> spy.getPlayer().equalsIgnoreCase(suspect)).orElse(false);
         if (spyingSuspect) {
             spyService.endSpy();
         }

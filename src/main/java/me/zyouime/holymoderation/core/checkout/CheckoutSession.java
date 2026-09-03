@@ -6,14 +6,20 @@ import lombok.Getter;
 public final class CheckoutSession {
 
     private final String suspect;
+    private int ticksAwaitingFreeze = 0;
     private int ticksSinceStart = 0;
     private boolean awaitingFreeze = true;
+    private boolean started = false;
 
     public CheckoutSession(String suspect) {
         this.suspect = suspect;
     }
 
     public void tick() {
+        if (awaitingFreeze) {
+            ticksAwaitingFreeze++;
+            return;
+        }
         ticksSinceStart++;
     }
 
@@ -21,11 +27,15 @@ public final class CheckoutSession {
         awaitingFreeze = false;
     }
 
+    public void markStarted() {
+        started = true;
+    }
+
     public boolean isAtTick(int tick) {
-        return ticksSinceStart == tick;
+        return started && ticksSinceStart == tick;
     }
 
     public boolean waitedLongerThan(int ticks) {
-        return awaitingFreeze && ticksSinceStart > ticks;
+        return awaitingFreeze && ticksAwaitingFreeze > ticks;
     }
 }
