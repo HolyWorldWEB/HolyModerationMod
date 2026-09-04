@@ -1,9 +1,5 @@
 package me.zyouime.holymoderation.core.punishment;
 
-/**
- * Формат времени наказания: число от 1 до 9999 и буква s, m, h или d
- * в любом регистре.
- */
 public final class PunishmentTime {
     private static final int MAX_DIGITS = 5;
     private static final String UNIT_PATTERN = "(?i)[smhd]";
