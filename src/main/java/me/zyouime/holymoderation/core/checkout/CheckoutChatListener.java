@@ -22,7 +22,10 @@ public record CheckoutChatListener(CheckoutService checkoutService, BanReasonLoo
             return ActionResult.PASS;
         }
         if (settings.autoAnyDesk.getValue() && checkoutService.isChecking()) {
-            anyDeskExtractor.inspect(text, checkoutService.suspect());
+            String suspect = checkoutService.suspect();
+            if (suspect.equals(HolyWorldPatterns.chatSender(text))) {
+                anyDeskExtractor.inspect(text, suspect);
+            }
         }
         if (banReasonLookup.onMessage(text)) {
             return ActionResult.FAIL;
