@@ -2,6 +2,8 @@ package me.zyouime.holymoderation.core.service;
 
 import java.util.List;
 import java.util.Optional;
+
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.zyouime.holymoderation.config.setting.impl.ModSettings;
 import me.zyouime.holymoderation.core.checkout.CheckoutPrompts;
@@ -15,9 +17,9 @@ import me.zyouime.holymoderation.core.user.VanishController;
 public final class CheckoutService {
 
     private static final int TICKS_PER_SECOND = 20;
-    private static final int SEND_TEXTS_TICK = TICKS_PER_SECOND * 5;
-    private static final int GATHER_INFO_TICK = TICKS_PER_SECOND * 6;
-    private static final int JOURNAL_PROMPT_TICK = TICKS_PER_SECOND * 7;
+    private static final int SEND_TEXTS_TICK = TICKS_PER_SECOND;
+    private static final int GATHER_INFO_TICK = TICKS_PER_SECOND * 2;
+    private static final int JOURNAL_PROMPT_TICK = TICKS_PER_SECOND * 3;
     private static final int FREEZE_TIMEOUT_TICKS = TICKS_PER_SECOND * 5;
     private static final int END_PROMPT_DELAY_TICKS = TICKS_PER_SECOND;
     private final UserState userState;
@@ -29,7 +31,7 @@ public final class CheckoutService {
     private final ModSettings settings;
     private final VanishController vanish;
     private CheckoutSession session;
-    private String endPromptSuspect = "";
+    private String lastSuspect = "";
     private int ticksUntilEndPrompt = -1;
 
     public boolean isChecking() {
@@ -45,6 +47,10 @@ public final class CheckoutService {
             return "";
         }
         return session.getSuspect();
+    }
+
+    public String lastSuspect() {
+        return lastSuspect;
     }
 
     public boolean isSuspect(String player) {
@@ -67,6 +73,7 @@ public final class CheckoutService {
             return;
         }
         session = new CheckoutSession(player);
+        lastSuspect = player;
         chatService.chatMessage("/freezing %s".formatted(player));
     }
 
@@ -74,18 +81,22 @@ public final class CheckoutService {
         if (session == null) {
             return;
         }
-        String suspect = endSession(true);
+        endSession(true);
+        successNotification();
+        scheduleEndPrompt();
+    }
+
+    private void successNotification() {
         notifications.success("Вы успешно закончили проверку.");
-        scheduleEndPrompt(suspect);
     }
 
     public void finishAfterBan() {
         if (session == null) {
             return;
         }
-        String suspect = endSession(false);
-        notifications.success("Вы успешно закончили проверку.");
-        scheduleEndPrompt(suspect);
+        endSession(false);
+        successNotification();
+        scheduleEndPrompt();
     }
 
     public void cancelPlayerNotFound() {
@@ -100,9 +111,7 @@ public final class CheckoutService {
         if (session == null) {
             return;
         }
-        String suspect = endSession(false);
-        notifications.warning("Игрок %s вышел с проверки. Проверка завершена.".formatted(suspect));
-        scheduleEndPrompt(suspect);
+        notifications.warning("Игрок %s вышел с проверки. Чтобы завершить проверку, введите /hm unfrz".formatted(session.getSuspect()), TICKS_PER_SECOND * 8);
     }
 
     public void sendTexts(String player) {
@@ -138,7 +147,7 @@ public final class CheckoutService {
 
     public void onServerLeave() {
         session = null;
-        endPromptSuspect = "";
+        lastSuspect = "";
         ticksUntilEndPrompt = -1;
         textSender.cancel();
     }
@@ -175,8 +184,7 @@ public final class CheckoutService {
         return suspect;
     }
 
-    private void scheduleEndPrompt(String suspect) {
-        endPromptSuspect = suspect;
+    private void scheduleEndPrompt() {
         ticksUntilEndPrompt = END_PROMPT_DELAY_TICKS;
     }
 
@@ -213,8 +221,7 @@ public final class CheckoutService {
             return;
         }
         ticksUntilEndPrompt = -1;
-        prompts.showEndPrompt(endPromptSuspect);
-        endPromptSuspect = "";
+        prompts.showEndPrompt();
     }
 
     private void gatherInfo(String suspect) {
