@@ -26,7 +26,7 @@ public record SpyChatListener(SpyService spyService, UserState userState, ChatSe
 
     public ActionResult onMessage(Text message) {
         SpySession session = spyService.sessionOrNull();
-        if (session == null || !session.isAwaitingResponse()) {
+        if (session == null || (!session.isAwaitingResponse() && !session.isProcessingPlaytimeInfo())) {
             return ActionResult.PASS;
         }
         String text = chatService.formatReceivedText(message.getString());
@@ -90,7 +90,6 @@ public record SpyChatListener(SpyService spyService, UserState userState, ChatSe
 
     private boolean handlePlaytimeLocation(SpySession session, String playtimeLocation) {
         if (playtimeLocation.equals(HolyWorldPatterns.OFFLINE_LITERAL)) {
-            session.processingPlaytimeInfo(true);
             spyService.onFindResponse(SpyStatus.offline());
             return true;
         }
