@@ -71,6 +71,7 @@ public final class SpyService {
         session.tickWaiting();
         if (session.waitedLongerThan(RESPONSE_TIMEOUT_TICKS)) {
             session.responseReceived();
+            session.resetParsing();
         }
         if (ticksUntilUpdate < 0) {
             return;
