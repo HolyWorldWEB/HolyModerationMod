@@ -12,7 +12,7 @@ import me.zyouime.holymoderation.core.service.NotificationsService;
 public final class AnyDeskExtractor {
 
     private static final int MIN_LENGTH = 7;
-    private static final int MAX_LENGTH = 11;
+    private static final int MAX_LENGTH = 12;
     private static final Pattern CANDIDATE = Pattern.compile("(?<![\\w.\\-])\\d{1,3}(?:[ \\u00A0.\\-]\\d{3})+(?![\\w.\\-])" + "|(?<![\\w.\\-])\\d{" + MIN_LENGTH + "," + MAX_LENGTH + "}(?![\\w.\\-])");
     private static final Pattern NON_DIGIT = Pattern.compile("\\D");
     private final ChatService chatService;
