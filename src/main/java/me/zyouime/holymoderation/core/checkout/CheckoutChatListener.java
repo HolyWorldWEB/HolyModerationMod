@@ -23,7 +23,7 @@ public record CheckoutChatListener(CheckoutService checkoutService, BanReasonLoo
         }
         if (settings.autoAnyDesk.getValue() && checkoutService.isChecking()) {
             String suspect = checkoutService.suspect();
-            if (suspect.equals(HolyWorldPatterns.chatSender(text))) {
+            if (suspect.equals(HolyWorldPatterns.messageSender(text))) {
                 anyDeskExtractor.inspect(text, suspect);
             }
         }

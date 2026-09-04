@@ -41,7 +41,7 @@ public final class CheckoutModule extends Module {
                 new SendTextsCommand(service, userState),
                 new StartCheckoutCommand(checkoutJournal),
                 new SbanCommand(punishmentService, service),
-                new EndCheckoutCommand(checkoutJournal, banReasonLookup, checkoutPrompts));
+                new EndCheckoutCommand(service, checkoutJournal, banReasonLookup, checkoutPrompts));
     }
 
     @Override

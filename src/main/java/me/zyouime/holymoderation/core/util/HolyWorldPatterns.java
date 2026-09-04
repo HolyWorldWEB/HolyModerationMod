@@ -31,6 +31,9 @@ public final class HolyWorldPatterns {
     public static final String CHECKBAN_CLEAN_HISTORY = "История не найдена.";
     public static final String CHECKBAN_INFO_PREFIX = "Игрок [";
     public static final String CHECKBAN_REASON_PREFIX = "Причина:";
+    private static final char PRIVATE_OPEN = '[';
+    private static final char PRIVATE_CLOSE = ']';
+    private static final String PRIVATE_ARROW = "->";
     public static final String CHECKBAN_IPBAN_PREFIX = "IP бан:";
     public static final String HISTORY_MARKER = " -- [";
     public static final String HISTORY_PLAYER_PREFIX = "Игрок";
@@ -60,6 +63,27 @@ public final class HolyWorldPatterns {
 
     public static boolean isFreezeLeave(String text, String nickname) {
         return text.startsWith(FREEZE_LEAVE_PREFIX + nickname);
+    }
+
+    public static String messageSender(String plain) {
+        String sender = chatSender(plain);
+        return sender != null ? sender : privateSender(plain);
+    }
+
+    public static String privateSender(String plain) {
+        if (plain.isEmpty() || plain.charAt(0) != PRIVATE_OPEN) {
+            return null;
+        }
+        int close = plain.indexOf(PRIVATE_CLOSE);
+        if (close < 0) {
+            return null;
+        }
+        String head = plain.substring(1, close);
+        int index = head.indexOf(PRIVATE_ARROW);
+        if (index >= 0) {
+            return head.substring(0, index).trim();
+        }
+        return null;
     }
 
     public static boolean isHubGate(String text) {
