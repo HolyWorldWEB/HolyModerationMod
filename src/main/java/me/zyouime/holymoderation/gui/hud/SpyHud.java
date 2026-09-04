@@ -56,7 +56,7 @@ public final class SpyHud extends HudPanel {
         return switch (current.type()) {
             case ONLINE -> {
                 boolean here = session.isOnSameServer(Main.getModContext().spyService().userLocation());
-                String text = here ? "рядом с вами, " + current.display() : current.display();
+                String text = here ? "на этой анке, " + current.display() : current.display();
                 yield HudLine.dotted(text, ONLINE, GuiColors.TEXT_MUTED);
             }
             case PAUSED -> HudLine.dotted(current.display(), PAUSED, GuiColors.TEXT_MUTED);
