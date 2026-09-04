@@ -18,6 +18,7 @@ public final class SpyService {
     public static final int TICKS_PER_SECOND = 20;
     public static final int INSTANT_DELAY_TICKS = 10;
     private static final int START_DELAY_TICKS = 5;
+    private static final int HIDE_TAIL_TICKS = TICKS_PER_SECOND * 2;
     private static final int RESPONSE_TIMEOUT_TICKS = TICKS_PER_SECOND * 5;
     private final UserState userState;
     private final ChatService chatService;
@@ -25,6 +26,7 @@ public final class SpyService {
     private final NotificationsService notificationsService;
     private SpySession session;
     private int ticksUntilUpdate = -1;
+    private int hideTailTicks = 0;
 
     public void startSpy(String player) {
         session = new SpySession(player);
@@ -36,6 +38,7 @@ public final class SpyService {
         if (session == null) {
             return;
         }
+        hideTailTicks = session.isAwaitingResponse() ? HIDE_TAIL_TICKS : 0;
         session = null;
         ticksUntilUpdate = -1;
         notificationsService.success("Слежка остановлена.");
@@ -60,11 +63,18 @@ public final class SpyService {
         ticksUntilUpdate = Math.max(1, delayTicks);
     }
 
+    public boolean isHidingTail() {
+        return hideTailTicks > 0;
+    }
+
     public void scheduleUpdate() {
         scheduleUpdate(settings.spyDelay.getValue() * TICKS_PER_SECOND);
     }
 
     public void tick() {
+        if (hideTailTicks > 0) {
+            hideTailTicks--;
+        }
         if (session == null) {
             return;
         }
