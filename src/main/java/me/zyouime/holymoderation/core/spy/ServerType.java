@@ -11,6 +11,7 @@ public enum ServerType {
     LITE("lanarchy", "lite", "lite-anarchy"),
     LITE120("l2anarchy", "lite120", "lite120-anarchy"),
     LPVP("lpvp", "lpvp", "lpvp"),
+    PRIME("prime", "prime", "prime"),
     LOBBY("lobby", "lobby", "lobby");
 
     private final String rawPrefix;
