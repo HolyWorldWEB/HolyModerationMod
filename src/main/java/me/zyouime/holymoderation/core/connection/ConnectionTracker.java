@@ -25,17 +25,17 @@ public final class ConnectionTracker {
     public void onGameJoin(ClientPlayNetworkHandler handler) {
         boolean sameConnection = handler.getConnection() == connection;
         connection = handler.getConnection();
-        applyLocation();
-        if (sameConnection) {
-            ServerEvents.SWITCH.invoker().onSwitch();
-            System.out.println("switch: " + Main.getModContext().userState().isVanishEnabled());
-            return;
-        }
         String address = resolveAddress(handler);
         boolean onHolyWorld = HOLYWORLD.matcher(address).matches();
+        userState.setHacAlertsEnabled(false);
         userState.setConnected(true);
         userState.setOnHW(onHolyWorld);
         userState.setUserNickname(resolveNickname());
+        applyLocation();
+        if (sameConnection) {
+            ServerEvents.SWITCH.invoker().onSwitch();
+            return;
+        }
         ServerEvents.JOIN.invoker().onJoin(address, onHolyWorld);
     }
 
