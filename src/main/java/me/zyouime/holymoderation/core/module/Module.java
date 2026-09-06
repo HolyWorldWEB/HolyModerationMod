@@ -17,6 +17,10 @@ public abstract class Module {
 
     public abstract void init();
 
+    public boolean canDisable() {
+        return true;
+    }
+
     public List<ModCommand> commands() {
         return List.of();
     }
@@ -24,6 +28,9 @@ public abstract class Module {
     public void tick() {}
 
     public final void setEnabled(boolean enabled) {
+        if (!enabled && !canDisable()) {
+            return;
+        }
         if (this.enabled == enabled) {
             return;
         }

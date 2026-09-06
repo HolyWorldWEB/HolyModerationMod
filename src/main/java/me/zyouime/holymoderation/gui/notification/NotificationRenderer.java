@@ -84,9 +84,6 @@ public final class NotificationRenderer {
     }
 
     public static float scale() {
-        if (Main.getModContext() == null) {
-            return 1.0f;
-        }
         Integer percent = Main.getModContext().settings().notificationScale.getValue();
         int value = percent == null ? 100 : percent;
         return MathHelper.clamp(value, SettingsCatalog.NOTIFICATION_SCALE_MIN, SettingsCatalog.NOTIFICATION_SCALE_MAX) / 100.0f;

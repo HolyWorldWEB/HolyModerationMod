@@ -22,7 +22,7 @@ public final class NotificationsModule extends Module {
     }
 
     @Override
-    protected void onDisable() {
-        notificationsService.clear();
+    public boolean canDisable() {
+        return false;
     }
 }

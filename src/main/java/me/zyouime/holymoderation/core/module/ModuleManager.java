@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.Getter;
 import me.zyouime.holymoderation.core.command.ModCommand;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -12,6 +13,8 @@ public final class ModuleManager {
 
     private final List<Module> modules = new ArrayList<>();
     private boolean installed = false;
+    @Getter
+    private boolean enabled = true;
 
     public ModuleManager add(Module module) {
         if (installed) {
@@ -36,6 +39,11 @@ public final class ModuleManager {
         return modules.stream()
                       .flatMap(module -> module.commands().stream())
                       .toList();
+    }
+
+    public void toggle(boolean value) {
+        enabled = value;
+        setAllEnabled(value);
     }
 
     public List<Module> all() {

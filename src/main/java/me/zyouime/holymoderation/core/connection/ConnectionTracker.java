@@ -4,7 +4,9 @@ import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import me.zyouime.holymoderation.Main;
 import me.zyouime.holymoderation.core.fabric.events.connection.ServerEvents;
+import me.zyouime.holymoderation.core.module.ModuleManager;
 import me.zyouime.holymoderation.core.providers.MinecraftProvider;
+import me.zyouime.holymoderation.core.service.NotificationsService;
 import me.zyouime.holymoderation.core.spy.ServerLocation;
 import me.zyouime.holymoderation.core.spy.ServerType;
 import me.zyouime.holymoderation.core.states.UserState;
@@ -21,22 +23,29 @@ public final class ConnectionTracker {
     private static final Pattern HOLYWORLD = Pattern.compile("(?i).*holl?yworld.*");
     private final UserState userState;
     private ClientConnection connection;
+    private final ModuleManager manager;
+    private final NotificationsService notificationsService;
 
     public void onGameJoin(ClientPlayNetworkHandler handler) {
         boolean sameConnection = handler.getConnection() == connection;
         connection = handler.getConnection();
         String address = resolveAddress(handler);
         boolean onHolyWorld = HOLYWORLD.matcher(address).matches();
+        manager.toggle(onHolyWorld);
+        if (!onHolyWorld) {
+            notificationsService.warning("Вы находитесь не на HolyWorld. Мод будет выключен");
+            return;
+        }
         userState.setHacAlertsEnabled(false);
         userState.setConnected(true);
-        userState.setOnHW(onHolyWorld);
+        userState.setOnHW(true);
         userState.setUserNickname(resolveNickname());
         applyLocation();
         if (sameConnection) {
             ServerEvents.SWITCH.invoker().onSwitch();
             return;
         }
-        ServerEvents.JOIN.invoker().onJoin(address, onHolyWorld);
+        ServerEvents.JOIN.invoker().onJoin(address);
     }
 
     public void onDisconnect() {
@@ -73,7 +82,7 @@ public final class ConnectionTracker {
         if (serverInfo == null) {
             return "";
         }
-        return serverInfo.address;
+        return serverInfo.address.toLowerCase();
     }
 
     private String resolveNickname() {

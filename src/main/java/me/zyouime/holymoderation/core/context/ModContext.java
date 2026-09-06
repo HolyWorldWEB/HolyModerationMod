@@ -42,7 +42,6 @@ public record ModContext(
         UserState userState = new UserState();
         NotificationsService notificationsService = new NotificationsService();
         SpyService spyService = new SpyService(userState, chatService, modSettings, notificationsService);
-        ConnectionTracker connectionTracker = new ConnectionTracker(userState);
         HttpClientService httpClientService = new HttpClientService();
         JsonParser jsonParser = new JsonParser();
         JournalApi journalApi = new JournalApi(httpClientService, modSettings.apiToken::getValue, loggerService, jsonParser);
@@ -71,7 +70,8 @@ public record ModContext(
 
 
         moduleManager.initAll();
-        new CommandInitializer(moduleManager.collectCommands(), loggerService, notificationsService).init();
+        ConnectionTracker connectionTracker = new ConnectionTracker(userState, moduleManager, notificationsService);
+        new CommandInitializer(moduleManager.collectCommands(), moduleManager, loggerService, notificationsService).init();
         return new ModContext(modSettings, chatService, loggerService, userState, moderatorState, moderatorService, spyService, connectionTracker, notificationsService, httpClientService, punishmentService, checkoutService, obsService,journalApi, moduleManager);
     }
 }

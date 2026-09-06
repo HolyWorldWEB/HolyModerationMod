@@ -5,9 +5,9 @@ import net.fabricmc.fabric.api.event.EventFactory;
 
 public final class ServerEvents {
 
-    public static final Event<ServerJoinEvent> JOIN = EventFactory.createArrayBacked(ServerJoinEvent.class, callbacks -> (address, onHw) -> {
+    public static final Event<ServerJoinEvent> JOIN = EventFactory.createArrayBacked(ServerJoinEvent.class, callbacks -> address -> {
         for (ServerJoinEvent callback : callbacks) {
-            callback.onJoin(address, onHw);
+            callback.onJoin(address);
         }
     });
 
@@ -32,6 +32,6 @@ public final class ServerEvents {
     }
 
     public interface ServerJoinEvent {
-        void onJoin(String address, boolean onHolyWorld);
+        void onJoin(String address);
     }
 }

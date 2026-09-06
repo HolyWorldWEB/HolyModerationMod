@@ -1,6 +1,7 @@
 package me.zyouime.holymoderation.core.module.impl;
 
 import me.zyouime.holymoderation.config.setting.impl.ModSettings;
+import me.zyouime.holymoderation.core.command.ModCommand;
 import me.zyouime.holymoderation.core.fabric.events.chat.CommandSendEvent;
 import me.zyouime.holymoderation.core.fabric.events.chat.MessageEvent;
 import me.zyouime.holymoderation.core.fabric.events.connection.ServerEvents;
@@ -11,6 +12,8 @@ import me.zyouime.holymoderation.core.service.NotificationsService;
 import me.zyouime.holymoderation.core.states.UserState;
 import me.zyouime.holymoderation.core.user.*;
 import net.minecraft.util.ActionResult;
+
+import java.util.List;
 
 public final class UserStateModule extends Module {
 
@@ -43,7 +46,7 @@ public final class UserStateModule extends Module {
             selfStateTracker.onCommand(command);
             return ActionResult.PASS;
         });
-        ServerEvents.JOIN.register((address, onHolyWorld) -> onWorldEnter(false));
+        ServerEvents.JOIN.register(address -> onWorldEnter(false));
         ServerEvents.SWITCH.register(() -> onWorldEnter(true));
         ServerEvents.LEAVE.register(locator::stop);
     }
@@ -53,7 +56,17 @@ public final class UserStateModule extends Module {
         locator.tick();
     }
 
+    @Override
+    protected void onDisable() {
+        if (this.locator.isSearching()) {
+            this.locator.stop();
+        }
+    }
+
     private void onWorldEnter(boolean isSwitch) {
+        if (!isEnabled()) {
+            return;
+        }
         userState.setGameInitCompleted(false);
         if (isSwitch && !userState.isInHub()) {
             autoCommands.applyAfterSwitch();
