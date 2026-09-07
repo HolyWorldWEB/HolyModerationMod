@@ -10,6 +10,7 @@
     "ChatScreenMixin",
     "ClientPlayNetworkHandlerMixin",
     "GuiRendererMixin",
+    "HandledScreenMixin",
     "MessageHandlerMixin"
   ],
   "injectors": {

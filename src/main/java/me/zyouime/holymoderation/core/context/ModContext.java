@@ -57,6 +57,7 @@ public record ModContext(
         PunishmentService punishmentService = new PunishmentService(chatService, notificationsService, vkLinkProvider);
         ObsService obsService = new ObsService(modSettings, notificationsService, loggerService);
         SettingsEditor settingsEditor = new SettingsEditor(modSettings);
+        ReportService reportService = new ReportService(chatService, notificationsService);
         ModuleManager moduleManager = new ModuleManager()
                 .add(new SettingsModule(modSettings, settingsEditor, chatService, notificationsService))
                 .add(new ModeratorModule(moderatorState, moderatorService, chatService))
@@ -66,7 +67,8 @@ public record ModContext(
                 .add(new PunishmentModule(punishmentService, checkoutService, notificationsService, modSettings))
                 .add(new ObsModule(obsService))
                 .add(new MessageModule(checkoutService, chatService, modSettings))
-                .add(new NotificationsModule(notificationsService));
+                .add(new NotificationsModule(notificationsService))
+                .add(new ReportModule(reportService));
 
 
         moduleManager.initAll();
