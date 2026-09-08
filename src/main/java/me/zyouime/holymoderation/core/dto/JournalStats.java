@@ -1,6 +1,10 @@
 package me.zyouime.holymoderation.core.dto;
 
 public record JournalStats(
+        ChecksInfo revisesAll,
+        ChecksInfo revisesWeek,
+        ChecksInfo revisesToday,
+        ChecksInfo revisesMonth,
         int mutesAll,
         int gaurantsAll,
         int mutesMonth,

@@ -31,6 +31,10 @@ public record ModeratorPrinter(ModeratorState state, ChatService chatService) {
             return;
         }
         line("%s%sСтатистика%s".formatted(Colors.AQUA, Colors.BOLD, Colors.WHITE));
+        line("Проверки сегодня: total %s | lite %s | classic %s | lite120 %s | prime %s".formatted(data.revisesToday().total(), data.revisesToday().lite(), data.revisesToday().classic(), data.revisesToday().lite120(), data.revisesToday().prime()));
+        line("Проверки за неделю: total %s | lite %s | classic %s | lite120 %s | prime %s".formatted(data.revisesWeek().total(), data.revisesWeek().lite(), data.revisesWeek().classic(), data.revisesWeek().lite120(), data.revisesWeek().prime()));
+        line("Проверки за месяц: total %s | lite %s | classic %s | lite120 %s | prime %s".formatted(data.revisesMonth().total(), data.revisesMonth().lite(), data.revisesMonth().classic(), data.revisesMonth().lite120(), data.revisesMonth().prime()));
+        line("Проверки за все время: total %s | lite %s | classic %s | lite120 %s | prime %s".formatted(data.revisesAll().total(), data.revisesAll().lite(), data.revisesAll().classic(), data.revisesAll().lite120(), data.revisesAll().prime()));
         line("Сегодня: муты %d | баны %d | гаранты %d".formatted(data.mutesToday(), data.bansToday(), data.gaurantsToday()));
         line("Месяц: муты %d | гаранты %d".formatted(data.mutesMonth(), data.gaurantsMonth()));
         line("Всего: муты %d | гаранты %d".formatted(data.mutesAll(), data.gaurantsAll()));
