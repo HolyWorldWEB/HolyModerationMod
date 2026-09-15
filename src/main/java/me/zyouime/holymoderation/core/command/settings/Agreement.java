@@ -1,4 +1,4 @@
-package me.zyouime.holymoderation.core.settings;
+package me.zyouime.holymoderation.core.command.settings;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

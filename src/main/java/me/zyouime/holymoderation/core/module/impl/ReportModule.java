@@ -12,11 +12,11 @@ public final class ReportModule extends Module {
 
     @Override
     public void init() {
-        HandledScreenClickEvent.EVENT.register((screen, clickEvent) -> {
+        HandledScreenClickEvent.EVENT.register((screen, slot) -> {
             if (!isEnabled()) {
                 return;
             }
-            reportService.handleScreenClick(screen, clickEvent);
+            reportService.handleScreenClick(screen, slot);
         });
     }
 }

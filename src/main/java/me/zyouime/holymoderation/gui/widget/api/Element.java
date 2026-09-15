@@ -1,5 +1,8 @@
 package me.zyouime.holymoderation.gui.widget.api;
 
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
+
 public interface Element {
 
     default boolean isMouseOver(double mouseX, double mouseY) {
@@ -25,15 +28,15 @@ public interface Element {
         return false;
     }
 
-    default boolean keyPressed(int keyCode, int modifiers) {
+    default boolean keyPressed(KeyInput input) {
         return false;
     }
 
-    default boolean keyReleased(int keyCode, int modifiers) {
+    default boolean keyReleased(KeyInput input) {
         return false;
     }
 
-    default boolean charTyped(char chr, int modifiers) {
+    default boolean charTyped(CharInput input) {
         return false;
     }
 }

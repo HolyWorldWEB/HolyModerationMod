@@ -1,10 +1,10 @@
-package me.zyouime.holymoderation.core.settings;
+package me.zyouime.holymoderation.core.command.settings;
 
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 import me.zyouime.holymoderation.config.setting.impl.ModSettings;
-import me.zyouime.holymoderation.core.settings.entry.SettingEntry;
+import me.zyouime.holymoderation.core.command.settings.entry.SettingEntry;
 
 @RequiredArgsConstructor
 public final class SettingsEditor {

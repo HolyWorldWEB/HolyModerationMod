@@ -12,6 +12,8 @@ import me.zyouime.holymoderation.render.builders.states.QuadRadiusState;
 import me.zyouime.holymoderation.render.builders.states.SizeState;
 import me.zyouime.holymoderation.render.renderers.impl.BuiltRectangle;
 import me.zyouime.holymoderation.render.utils.ScissorStack;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 import org.joml.Matrix4fStack;
 
 public class CategoryListWidget extends ListWidget<CategoryListWidget.CategoryEntry> implements Animated {
@@ -186,18 +188,18 @@ public class CategoryListWidget extends ListWidget<CategoryListWidget.CategoryEn
         }
 
         @Override
-        public boolean keyPressed(int keyCode, int modifiers) {
-            return this.category.keyPressed(keyCode, modifiers);
+        public boolean keyPressed(KeyInput input) {
+            return this.category.keyPressed(input);
         }
 
         @Override
-        public boolean keyReleased(int keyCode, int modifiers) {
-            return this.category.keyReleased(keyCode, modifiers);
+        public boolean keyReleased(KeyInput input) {
+            return this.category.keyReleased(input);
         }
 
         @Override
-        public boolean charTyped(char chr, int modifiers) {
-            return this.category.charTyped(chr, modifiers);
+        public boolean charTyped(CharInput input) {
+            return this.category.charTyped(input);
         }
 
         @Override

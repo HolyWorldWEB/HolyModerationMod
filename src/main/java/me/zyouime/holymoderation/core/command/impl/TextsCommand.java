@@ -11,7 +11,7 @@ import me.zyouime.holymoderation.core.command.Exec;
 import me.zyouime.holymoderation.core.command.ModCommand;
 import me.zyouime.holymoderation.core.service.ChatService;
 import me.zyouime.holymoderation.core.service.NotificationsService;
-import me.zyouime.holymoderation.core.settings.SettingsCatalog;
+import me.zyouime.holymoderation.core.command.settings.SettingsCatalog;
 import me.zyouime.holymoderation.core.util.Colors;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.Text;

@@ -15,6 +15,8 @@ import me.zyouime.holymoderation.render.builders.states.SizeState;
 import me.zyouime.holymoderation.render.renderers.impl.BuiltRectangle;
 import me.zyouime.holymoderation.render.renderers.impl.BuiltText;
 import me.zyouime.holymoderation.resources.Fonts;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 import org.joml.Matrix4fStack;
 
 import java.util.ArrayList;
@@ -36,6 +38,12 @@ public class PanelSetting<T> extends AbstractElement implements Animated, Expand
         super(0.0f, 0.0f, width, height);
         this.setting = setting;
         this.settingName = settingName;
+    }
+
+    public PanelSetting(float width, float height, Setting<T> setting) {
+        super(0.0f, 0.0f, width, height);
+        this.setting = setting;
+        this.settingName = setting.getName();
     }
 
     public void init() {
@@ -109,9 +117,9 @@ public class PanelSetting<T> extends AbstractElement implements Animated, Expand
     }
 
     @Override
-    public boolean charTyped(char chr, int modifiers) {
+    public boolean charTyped(CharInput input) {
         for (AbstractElement widget : this.widgets) {
-            if (widget.charTyped(chr, modifiers)) {
+            if (widget.charTyped(input)) {
                 return true;
             }
         }
@@ -119,9 +127,9 @@ public class PanelSetting<T> extends AbstractElement implements Animated, Expand
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int modifiers) {
+    public boolean keyPressed(KeyInput input) {
         for (AbstractElement widget : this.widgets) {
-            if (widget.keyPressed(keyCode, modifiers)) {
+            if (widget.keyPressed(input)) {
                 return true;
             }
         }
@@ -129,9 +137,9 @@ public class PanelSetting<T> extends AbstractElement implements Animated, Expand
     }
 
     @Override
-    public boolean keyReleased(int keyCode, int modifiers) {
+    public boolean keyReleased(KeyInput input) {
         for (AbstractElement widget : this.widgets) {
-            if (widget.keyReleased(keyCode, modifiers)) {
+            if (widget.keyReleased(input)) {
                 return true;
             }
         }

@@ -16,12 +16,12 @@ public class OptionsSetting<T> extends PanelSetting<T> {
     private final T initialValue;
     private OptionsListWidget<T> list;
 
-    public OptionsSetting(Setting<T> setting, String settingName, List<AbstractOptionEntry<T>> options, T initialValue) {
-        this(DEFAULT_WIDTH, 20.0f, setting, settingName, options, initialValue);
+    public OptionsSetting(Setting<T> setting, List<AbstractOptionEntry<T>> options, T initialValue) {
+        this(DEFAULT_WIDTH, 20.0f, setting, options, initialValue);
     }
 
-    public OptionsSetting(float width, float height, Setting<T> setting, String settingName, List<AbstractOptionEntry<T>> options, T initialValue) {
-        super(width, height, setting, settingName);
+    public OptionsSetting(float width, float height, Setting<T> setting, List<AbstractOptionEntry<T>> options, T initialValue) {
+        super(width, height, setting);
         this.options.addAll(options);
         this.initialValue = initialValue;
     }

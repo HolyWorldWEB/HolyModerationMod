@@ -12,12 +12,12 @@ public class SliderSetting extends PanelSetting<Integer> {
     private final int max;
     private SliderWidget<Integer> slider;
 
-    public SliderSetting(Setting<Integer> setting, String settingName, int min, int max) {
-        this(DEFAULT_WIDTH, 34.0f, setting, settingName, min, max);
+    public SliderSetting(Setting<Integer> setting, int min, int max) {
+        this(DEFAULT_WIDTH, 34.0f, setting,min, max);
     }
 
-    public SliderSetting(float width, float height, Setting<Integer> setting, String settingName, int min, int max) {
-        super(width, height, setting, settingName);
+    public SliderSetting(float width, float height, Setting<Integer> setting,int min, int max) {
+        super(width, height, setting);
         this.min = min;
         this.max = max;
     }

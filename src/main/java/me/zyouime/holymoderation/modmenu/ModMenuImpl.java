@@ -9,6 +9,6 @@ public final class ModMenuImpl implements ModMenuApi {
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return parent -> new SettingsScreen(parent, Main.getModContext().settings());
+        return SettingsScreen::open;
     }
 }

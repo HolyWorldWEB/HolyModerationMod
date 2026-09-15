@@ -3,15 +3,15 @@ package me.zyouime.holymoderation.core.fabric.events.screen;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.item.ItemStack;
+import net.minecraft.screen.slot.Slot;
 
 public interface HandledScreenClickEvent {
 
-    Event<HandledScreenClickEvent> EVENT = EventFactory.createArrayBacked(HandledScreenClickEvent.class, handledScreenClickEvents -> (screen,stack) -> {
+    Event<HandledScreenClickEvent> EVENT = EventFactory.createArrayBacked(HandledScreenClickEvent.class, handledScreenClickEvents -> (screen,slot) -> {
         for (HandledScreenClickEvent event : handledScreenClickEvents) {
-            event.handleScreenClick(screen, stack);
+            event.handleScreenClick(screen, slot);
         }
     });
 
-    void handleScreenClick(HandledScreen<?> screen, ItemStack stack);
+    void handleScreenClick(HandledScreen<?> screen, Slot slot);
 }

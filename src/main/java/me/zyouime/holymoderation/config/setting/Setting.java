@@ -17,20 +17,22 @@ public class Setting<T> {
     private final String configKey;
     private final Type type;
     @Setter private Consumer<T> setCallback;
+    @Getter private final String name;
 
-    private Setting(String configKey, Type type, T defaultValue, Consumer<T> setCallback) {
+    private Setting(String configKey, Type type, T defaultValue, Consumer<T> setCallback, String name) {
         this.configKey = configKey;
         this.defaultValue = defaultValue;
         this.type = type;
         this.setCallback = setCallback;
+        this.name = name;
     }
 
-    public static <W> Setting<W> of(String configKey, Type type, W defaultValue, Consumer<W> setCallback) {
-        return new Setting<>(configKey, type, defaultValue, setCallback);
+    public static <W> Setting<W> of(String configKey, Type type, W defaultValue, Consumer<W> setCallback, String name) {
+        return new Setting<>(configKey, type, defaultValue, setCallback, name);
     }
 
-    public static <W> Setting<W> of(String configKey, Type type, W defaultValue) {
-       return new Setting<>(configKey, type, defaultValue, null);
+    public static <W> Setting<W> of(String configKey, Type type, W defaultValue, String name) {
+       return new Setting<>(configKey, type, defaultValue, null, name);
     }
 
     public void initValue(JsonElement value, Gson gson) {

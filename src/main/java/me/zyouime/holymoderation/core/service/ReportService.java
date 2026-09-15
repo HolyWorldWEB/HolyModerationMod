@@ -2,6 +2,7 @@ package me.zyouime.holymoderation.core.service;
 
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.item.ItemStack;
+import net.minecraft.screen.slot.Slot;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,12 +11,16 @@ public record ReportService(ChatService chatService, NotificationsService notifi
 
     private static final Pattern NICKNAME_PATTERN = Pattern.compile("Дело игрока\\s+(?:«[^»]+»\\s+)?([^\\s(\\[]+)");
 
-    public void handleScreenClick(HandledScreen<?> screen, ItemStack stack) {
+    public void handleScreenClick(HandledScreen<?> screen, Slot slot) {
         String title = screen.getTitle().getString();
         if (!title.startsWith("Жалобы")) {
             return;
         }
-        if (stack == null || stack.isEmpty()) {
+        if (!slot.hasStack()) {
+            return;
+        }
+        ItemStack stack = slot.getStack();
+        if (stack.getName() == null) {
             return;
         }
         String itemStackName = stack.getName().getString();

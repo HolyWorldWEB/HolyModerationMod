@@ -26,8 +26,8 @@ public record ChatDecorator(CheckoutService checkoutService, ChatService chatSer
     }
 
     private boolean isFromSuspect(String plain) {
-        String suspect = checkoutService.suspect();
-        return !suspect.isEmpty() && suspect.equals(HolyWorldPatterns.chatSender(plain));
+        String suspect = checkoutService.suspect().toLowerCase();
+        return !suspect.isEmpty() && suspect.equals(HolyWorldPatterns.chatSender(plain.toLowerCase()));
     }
 
     private Text markSuspectMessage(Text message, String plain) {

@@ -25,12 +25,12 @@ public class TextListSetting extends PanelSetting<List<String>> {
     private ButtonWidget addButton;
     private BuiltText hint;
 
-    public TextListSetting(Setting<List<String>> setting, String settingName, int maxLength) {
-        this(WIDE_WIDTH, setting, settingName, maxLength);
+    public TextListSetting(Setting<List<String>> setting, int maxLength) {
+        this(WIDE_WIDTH, setting, maxLength);
     }
 
-    public TextListSetting(float width, Setting<List<String>> setting, String settingName, int maxLength) {
-        super(width, HEADER_HEIGHT + FOOTER_HEIGHT, setting, settingName);
+    public TextListSetting(float width, Setting<List<String>> setting, int maxLength) {
+        super(width, HEADER_HEIGHT + FOOTER_HEIGHT, setting);
         this.maxLength = maxLength;
     }
 

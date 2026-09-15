@@ -1,6 +1,5 @@
 package me.zyouime.holymoderation.core.punishment;
 
-import java.util.Arrays;
 import java.util.Optional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -16,15 +15,28 @@ public enum PunishmentType {
     BAN("ban", Kind.BAN, TimeMode.OPTIONAL, true),
     BANIP("banip", Kind.BAN, TimeMode.OPTIONAL, true),
     TEMPBAN("tempban", Kind.BAN, TimeMode.REQUIRED, true),
-    WARN("warn", Kind.WARN, TimeMode.NONE, false);
+    WARN("warn", Kind.WARN, TimeMode.NONE, false),
+    NVP_BAN("nvp ban", Kind.BAN, TimeMode.NONE, false);
 
+    @Getter
     private final String command;
     private final Kind kind;
     private final TimeMode timeMode;
     private final boolean supportsVk;
 
     public static Optional<PunishmentType> byCommand(String command) {
-        return Arrays.stream(values()).filter(type -> type.command.equalsIgnoreCase(command)).findFirst();
+        if (command == null || command.isBlank()) {
+            return Optional.empty();
+        }
+        String lower = command.toLowerCase();
+        for (PunishmentType type : values()) {
+            String cmd = type.getCommand().toLowerCase();
+            int len = cmd.length();
+            if (lower.startsWith(cmd) && (lower.length() == len || lower.charAt(len) == ' ')) {
+                return Optional.of(type);
+            }
+        }
+        return Optional.empty();
     }
 
     public boolean isBan() {

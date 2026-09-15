@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.zyouime.holymoderation.core.providers.MinecraftProvider;
-import me.zyouime.holymoderation.core.settings.SettingsCatalog;
+import me.zyouime.holymoderation.core.command.settings.SettingsCatalog;
 import me.zyouime.holymoderation.gui.GuiColors;
 import me.zyouime.holymoderation.render.animation.Animation;
 import me.zyouime.holymoderation.render.builders.Builder;

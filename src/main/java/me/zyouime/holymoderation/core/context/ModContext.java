@@ -12,7 +12,7 @@ import me.zyouime.holymoderation.core.module.ModuleManager;
 import me.zyouime.holymoderation.core.parser.JsonParser;
 import me.zyouime.holymoderation.core.punishment.VkLinkProvider;
 import me.zyouime.holymoderation.core.service.*;
-import me.zyouime.holymoderation.core.settings.SettingsEditor;
+import me.zyouime.holymoderation.core.command.settings.SettingsEditor;
 import me.zyouime.holymoderation.core.states.ModeratorState;
 import me.zyouime.holymoderation.core.states.UserState;
 import me.zyouime.holymoderation.core.user.VanishController;
@@ -30,7 +30,6 @@ public record ModContext(
         HttpClientService httpClientService,
         PunishmentService punishmentService,
         CheckoutService checkoutService,
-        ObsService obsService,
         JournalApi journalApi,
         ModuleManager moduleManager) {
 
@@ -54,18 +53,18 @@ public record ModContext(
         VanishController vanishController = new VanishController(userState, chatService);
         CheckoutService checkoutService = new CheckoutService(userState, chatService, notificationsService, spyService,prompts, textSender, modSettings, vanishController );
         VkLinkProvider vkLinkProvider = new VkLinkProvider(moderatorState, modSettings);
-        PunishmentService punishmentService = new PunishmentService(chatService, notificationsService, vkLinkProvider);
-        ObsService obsService = new ObsService(modSettings, notificationsService, loggerService);
+        PunishmentService punishmentService = new PunishmentService(chatService, notificationsService, vkLinkProvider, spyService);
         SettingsEditor settingsEditor = new SettingsEditor(modSettings);
         ReportService reportService = new ReportService(chatService, notificationsService);
+        NVPService nvpService = new NVPService(spyService, chatService, notificationsService);
         ModuleManager moduleManager = new ModuleManager()
                 .add(new SettingsModule(modSettings, settingsEditor, chatService, notificationsService))
                 .add(new ModeratorModule(moderatorState, moderatorService, chatService))
                 .add(new UserStateModule(userState, chatService, notificationsService, modSettings, loggerService, vanishController))
+                .add(new NVPModule(nvpService))
                 .add(new SpyModule(spyService, userState, checkoutService, chatService, modSettings, loggerService))
                 .add(new CheckoutModule(userState, punishmentService, checkoutService, chatService, notificationsService, modSettings, prompts, journal))
                 .add(new PunishmentModule(punishmentService, checkoutService, notificationsService, modSettings))
-                .add(new ObsModule(obsService))
                 .add(new MessageModule(checkoutService, chatService, modSettings))
                 .add(new NotificationsModule(notificationsService))
                 .add(new ReportModule(reportService));
@@ -74,6 +73,6 @@ public record ModContext(
         moduleManager.initAll();
         ConnectionTracker connectionTracker = new ConnectionTracker(userState, moduleManager, notificationsService);
         new CommandInitializer(moduleManager.collectCommands(), moduleManager, loggerService, notificationsService).init();
-        return new ModContext(modSettings, chatService, loggerService, userState, moderatorState, moderatorService, spyService, connectionTracker, notificationsService, httpClientService, punishmentService, checkoutService, obsService,journalApi, moduleManager);
+        return new ModContext(modSettings, chatService, loggerService, userState, moderatorState, moderatorService, spyService, connectionTracker, notificationsService, httpClientService, punishmentService, checkoutService,journalApi, moduleManager);
     }
 }

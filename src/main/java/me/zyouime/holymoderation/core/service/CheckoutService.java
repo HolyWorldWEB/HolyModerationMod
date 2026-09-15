@@ -3,7 +3,6 @@ package me.zyouime.holymoderation.core.service;
 import java.util.List;
 import java.util.Optional;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.zyouime.holymoderation.config.setting.impl.ModSettings;
 import me.zyouime.holymoderation.core.checkout.CheckoutPrompts;
@@ -163,7 +162,7 @@ public final class CheckoutService {
         CheckoutEvents.STARTED.invoker().onStarted(suspect);
     }
 
-    private String endSession(boolean sendUnfreeze) {
+    private void endSession(boolean sendUnfreeze) {
         String suspect = session.getSuspect();
         boolean started = session.isStarted();
         if (started) {
@@ -181,7 +180,6 @@ public final class CheckoutService {
         if (started) {
             CheckoutEvents.FINISHED.invoker().onFinished(suspect);
         }
-        return suspect;
     }
 
     private void scheduleEndPrompt() {
@@ -208,7 +206,7 @@ public final class CheckoutService {
             return;
         }
         if (session.isAtTick(JOURNAL_PROMPT_TICK)) {
-            prompts.showJournalPrompt(session.getSuspect());
+            prompts.showJournalPrompt();
         }
     }
 

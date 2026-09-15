@@ -3,6 +3,8 @@ package me.zyouime.holymoderation.gui.widget.api;
 import lombok.Getter;
 import me.zyouime.holymoderation.render.animation.Animation;
 import me.zyouime.holymoderation.render.utils.ScissorStack;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.util.math.MathHelper;
 import org.joml.Matrix4fStack;
 
@@ -146,9 +148,9 @@ public abstract class ListWidget<E extends ListWidget.ListEntry> extends Abstrac
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int modifiers) {
+    public boolean keyPressed(KeyInput input) {
         for (E entry : this.entries) {
-            if (entry.keyPressed(keyCode, modifiers)) {
+            if (entry.keyPressed(input)) {
                 return true;
             }
         }
@@ -156,9 +158,9 @@ public abstract class ListWidget<E extends ListWidget.ListEntry> extends Abstrac
     }
 
     @Override
-    public boolean keyReleased(int keyCode, int modifiers) {
+    public boolean keyReleased(KeyInput input) {
         for (E entry : this.entries) {
-            if (entry.keyReleased(keyCode, modifiers)) {
+            if (entry.keyReleased(input)) {
                 return true;
             }
         }
@@ -166,9 +168,9 @@ public abstract class ListWidget<E extends ListWidget.ListEntry> extends Abstrac
     }
 
     @Override
-    public boolean charTyped(char chr, int modifiers) {
+    public boolean charTyped(CharInput input) {
         for (E entry : this.entries) {
-            if (entry.charTyped(chr, modifiers)) {
+            if (entry.charTyped(input)) {
                 return true;
             }
         }

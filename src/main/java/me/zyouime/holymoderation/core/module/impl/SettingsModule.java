@@ -7,8 +7,8 @@ import me.zyouime.holymoderation.core.command.ModCommand;
 import me.zyouime.holymoderation.core.command.impl.SettingsCommand;
 import me.zyouime.holymoderation.core.command.impl.TextsCommand;
 import me.zyouime.holymoderation.core.module.Module;
-import me.zyouime.holymoderation.core.settings.SettingsCatalog;
-import me.zyouime.holymoderation.core.settings.SettingsEditor;
+import me.zyouime.holymoderation.core.command.settings.SettingsCatalog;
+import me.zyouime.holymoderation.core.command.settings.SettingsEditor;
 import me.zyouime.holymoderation.core.service.ChatService;
 import me.zyouime.holymoderation.core.service.NotificationsService;
 

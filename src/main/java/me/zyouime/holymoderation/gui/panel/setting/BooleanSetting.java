@@ -9,12 +9,12 @@ public class BooleanSetting extends PanelSetting<Boolean> {
     private static final float TOGGLE_HEIGHT = 12.0f;
     private ToggleWidget toggle;
 
-    public BooleanSetting(Setting<Boolean> setting, String settingName) {
-        this(DEFAULT_WIDTH, 23.0f, setting, settingName);
+    public BooleanSetting(Setting<Boolean> setting) {
+        this(DEFAULT_WIDTH, 23.0f, setting);
     }
 
-    public BooleanSetting(float width, float height, Setting<Boolean> setting, String settingName) {
-        super(width, height, setting, settingName);
+    public BooleanSetting(float width, float height, Setting<Boolean> setting) {
+        super(width, height, setting);
     }
 
     @Override

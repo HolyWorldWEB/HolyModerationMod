@@ -25,7 +25,4 @@ public final class ConfirmationGate {
         pendingCommand = StringUtils.EMPTY;
     }
 
-    public boolean isPending() {
-        return !pendingCommand.isEmpty();
-    }
 }

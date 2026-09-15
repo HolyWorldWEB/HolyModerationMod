@@ -6,6 +6,11 @@ public final class PunishmentParser {
     }
 
     public static Result parse(PunishmentType type, String command) {
+        if (type == PunishmentType.NVP_BAN) {
+            String args = command.length() > type.getCommand().length() ? command.substring(type.getCommand().length()).trim() : "";
+            String player = args.isEmpty() ? null : args.split("\\s+")[0];
+            return Result.of(new Punishment(type, player, null, null));
+        }
         String[] parts = command.split(" ", 3);
         if (parts.length < 2) {
             return Result.error("Вы не указали ник игрока и причину.");

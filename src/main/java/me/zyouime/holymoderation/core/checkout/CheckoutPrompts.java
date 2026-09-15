@@ -6,11 +6,11 @@ import net.minecraft.text.MutableText;
 
 public record CheckoutPrompts(ChatService chatService) {
 
-    public void showJournalPrompt(String suspect) {
+    public void showJournalPrompt() {
         for (CheckoutReason reason : CheckoutReason.values()) {
             send("Внести проверку: %s".formatted(reason.getLabel()),
                     "Нажмите, чтобы внести проверку в журнал",
-                    "/hm startcheckout %s %s".formatted(suspect, reason.getApiValue()));
+                    "/hm startcheckout %s".formatted(reason.getApiValue()));
         }
     }
 

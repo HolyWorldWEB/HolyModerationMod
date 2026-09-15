@@ -14,6 +14,6 @@ public abstract class HandledScreenMixin {
 
     @Inject(method = "onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;onMouseClick(Lnet/minecraft/screen/slot/Slot;Lnet/minecraft/screen/slot/SlotActionType;)V", shift = At.Shift.AFTER))
     private void onMouseClick(Slot slot, int slotId, int button, SlotActionType actionType, CallbackInfo ci) {
-        HandledScreenClickEvent.EVENT.invoker().handleScreenClick((HandledScreen<?>) (Object) this, slot.getStack());
+        HandledScreenClickEvent.EVENT.invoker().handleScreenClick((HandledScreen<?>) (Object) this, slot);
     }
 }

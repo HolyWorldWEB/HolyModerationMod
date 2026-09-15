@@ -3,7 +3,7 @@ package me.zyouime.holymoderation.gui;
 import me.zyouime.holymoderation.Main;
 import me.zyouime.holymoderation.config.setting.impl.ModSettings;
 import me.zyouime.holymoderation.core.providers.MinecraftProvider;
-import me.zyouime.holymoderation.core.settings.SettingsCatalog;
+import me.zyouime.holymoderation.core.command.settings.SettingsCatalog;
 import me.zyouime.holymoderation.core.sounds.ModSounds;
 import me.zyouime.holymoderation.gui.panel.CategoryListWidget;
 import me.zyouime.holymoderation.gui.panel.DefaultCategory;
@@ -11,7 +11,6 @@ import me.zyouime.holymoderation.gui.panel.setting.BooleanSetting;
 import me.zyouime.holymoderation.gui.panel.setting.SliderSetting;
 import me.zyouime.holymoderation.gui.panel.setting.TextListSetting;
 import me.zyouime.holymoderation.gui.panel.setting.TextSetting;
-import me.zyouime.holymoderation.gui.widget.api.AbstractElement;
 import me.zyouime.holymoderation.render.animation.impl.EaseOut;
 import me.zyouime.holymoderation.render.builders.Builder;
 import me.zyouime.holymoderation.render.builders.states.QuadColorState;
@@ -22,7 +21,6 @@ import me.zyouime.holymoderation.render.renderers.impl.BuiltRectangle;
 import me.zyouime.holymoderation.render.renderers.impl.BuiltText;
 import me.zyouime.holymoderation.render.utils.BufferRenderer;
 import me.zyouime.holymoderation.resources.Fonts;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.Window;
 import net.minecraft.util.math.MathHelper;
@@ -57,10 +55,20 @@ public class SettingsScreen extends AbstractScreen {
     private BuiltText subtitle;
     private BuiltText hint;
     private BuiltText icon;
+    private boolean initialized;
+    private static SettingsScreen lastScreen;
 
     public SettingsScreen(Screen parent, ModSettings settings) {
         super(parent);
         this.settings = settings;
+    }
+
+    public static Screen open(Screen parent) {
+        if (lastScreen != null) {
+            lastScreen.setParent(parent);
+            return lastScreen;
+        }
+        return new SettingsScreen(parent, Main.getModContext().settings());
     }
 
     private static Window window() {
@@ -94,10 +102,13 @@ public class SettingsScreen extends AbstractScreen {
     @Override
     protected void init() {
         ModSounds.playSound(ModSounds.GUI_OPEN);
-        this.widgets.clear();
-        this.buildRenderers();
-        this.categories = this.addWidget(new CategoryListWidget(0.0f, 0.0f, listWidth(), 0.0f, COLUMN_GAP));
-        this.buildCategories();
+        if (!initialized) {
+            this.widgets.clear();
+            this.buildRenderers();
+            this.categories = this.addWidget(new CategoryListWidget(0.0f, 0.0f, listWidth(), 0.0f, COLUMN_GAP));
+            this.buildCategories();
+            initialized = true;
+        }
         this.updateLayout();
     }
 
@@ -160,55 +171,49 @@ public class SettingsScreen extends AbstractScreen {
         float column = columnWidth();
         float wide = listWidth();
         DefaultCategory auto = new DefaultCategory("Автодействия", column, Icons.BOLT);
-        auto.addSetting(new BooleanSetting(this.settings.autoVanish, "Автованиш"));
-        auto.addSetting(new BooleanSetting(this.settings.autoFly, "Автофлай"));
-        auto.addSetting(new BooleanSetting(this.settings.autoGm3, "Автогм3"));
-        auto.addSetting(new BooleanSetting(this.settings.autoGod, "Автогод"));
-        auto.addSetting(new BooleanSetting(this.settings.autoHacAlerts, "HAC alerts"));
+        auto.addSetting(new BooleanSetting(this.settings.autoVanish));
+        auto.addSetting(new BooleanSetting(this.settings.autoFly));
+        auto.addSetting(new BooleanSetting(this.settings.autoGm3));
+        auto.addSetting(new BooleanSetting(this.settings.autoGod));
+        auto.addSetting(new BooleanSetting(this.settings.autoHacAlerts));
         DefaultCategory checkout = new DefaultCategory("Проверка", column, Icons.SEARCH);
-        checkout.addSetting(new BooleanSetting(this.settings.autoCheckoutTp, "Телепорт на /warp logo"));
-        checkout.addSetting(new BooleanSetting(this.settings.autoAnyDesk, "Копировать ID AnyDesk"));
-        checkout.addSetting(new BooleanSetting(this.settings.dupeIp, "Автоматический /dupeip"));
+        checkout.addSetting(new BooleanSetting(this.settings.autoCheckoutTp));
+        checkout.addSetting(new BooleanSetting(this.settings.autoAnyDesk));
+        checkout.addSetting(new BooleanSetting(this.settings.dupeIp));
         DefaultCategory spy = new DefaultCategory("Слежка", column, Icons.EYE);
-        spy.addSetting(new BooleanSetting(this.settings.autoSpyTp, "Телепорт при слежке"));
-        spy.addSetting(new SliderSetting(this.settings.spyDelay, "Задержка обновления", SettingsCatalog.SPY_DELAY_MIN, SettingsCatalog.SPY_DELAY_MAX));
+        spy.addSetting(new BooleanSetting(this.settings.autoSpyTp));
+        spy.addSetting(new SliderSetting(this.settings.spyDelay, SettingsCatalog.SPY_DELAY_MIN, SettingsCatalog.SPY_DELAY_MAX));
         DefaultCategory chat = new DefaultCategory("Чат", column, Icons.CHAT);
-        chat.addSetting(new BooleanSetting(this.settings.copyButton, "Кнопка копирования"));
-        chat.addSetting(new TextSetting(this.settings.copyButtonText, "Текст кнопки")
+        chat.addSetting(new BooleanSetting(this.settings.copyButton));
+        chat.addSetting(new TextSetting(this.settings.copyButtonText)
                 .colorCodes(true)
                 .maxLength(SettingsCatalog.MAX_TEXT_LENGTH)
                 .placeholder("&f&l[&a&lcopy&f&l]"));
-        chat.addSetting(new TextSetting(this.settings.playerMarker, "Метка игрока на проверке")
+        chat.addSetting(new TextSetting(this.settings.playerMarker)
                 .colorCodes(true)
                 .maxLength(SettingsCatalog.MAX_TEXT_LENGTH)
                 .placeholder("&d&l[CHECK]"));
         DefaultCategory indicatorHud = new DefaultCategory("Индикаторы", column, Icons.PIN);
-        indicatorHud.addSetting(new BooleanSetting(this.settings.spyHudEnabled, "Показывать слежку"));
-        indicatorHud.addSetting(new SliderSetting(this.settings.spyHudScale, "Масштаб, %", SettingsCatalog.HUD_SCALE_MIN, SettingsCatalog.HUD_SCALE_MAX));
-        indicatorHud.addSetting(new BooleanSetting(this.settings.checkoutHudEnabled, "Показывать данные о проверке"));
-        indicatorHud.addSetting(new SliderSetting(this.settings.checkoutHudScale, "Масштаб, %", SettingsCatalog.HUD_SCALE_MIN, SettingsCatalog.HUD_SCALE_MAX));
-        DefaultCategory obsCategory = new DefaultCategory("OBS", column);
-        obsCategory.addSetting(new BooleanSetting(this.settings.obsEnabled, "Включить авто-запись"));
-        obsCategory.addSetting(new TextSetting(this.settings.obsHost, "Хост (IP)"));
-        obsCategory.addSetting(new TextSetting(this.settings.obsPort, "Порт (Число)"));
-        obsCategory.addSetting(new TextSetting(this.settings.obsPassword, "Пароль (Если есть авторизация)"));
+        indicatorHud.addSetting(new BooleanSetting(this.settings.spyHudEnabled));
+        indicatorHud.addSetting(new SliderSetting(this.settings.spyHudScale, SettingsCatalog.HUD_SCALE_MIN, SettingsCatalog.HUD_SCALE_MAX));
+        indicatorHud.addSetting(new BooleanSetting(this.settings.checkoutHudEnabled));
+        indicatorHud.addSetting(new SliderSetting(this.settings.checkoutHudScale, SettingsCatalog.HUD_SCALE_MIN, SettingsCatalog.HUD_SCALE_MAX));
         DefaultCategory journal = new DefaultCategory("Журнал", wide, Icons.FILE);
-        journal.addSetting(new TextSetting(wide, 38.0f, this.settings.apiToken, "Токен журнала")
+        journal.addSetting(new TextSetting(wide, 38.0f, this.settings.apiToken)
                 .maxLength(SettingsCatalog.MAX_TEXT_LENGTH)
                 .placeholder("не задан"));
-        journal.addSetting(new TextSetting(wide, 38.0f, this.settings.vkLink, "Ссылка на ВК")
+        journal.addSetting(new TextSetting(wide, 38.0f, this.settings.vkLink)
                 .maxLength(SettingsCatalog.MAX_TEXT_LENGTH)
                 .placeholder("https://vk.com/"));
         DefaultCategory notifications = new DefaultCategory("Уведомления", column, Icons.DESKTOP);
-        notifications.addSetting(new SliderSetting(this.settings.notificationScale, "Масштаб, %", SettingsCatalog.NOTIFICATION_SCALE_MIN, SettingsCatalog.NOTIFICATION_SCALE_MAX));
+        notifications.addSetting(new SliderSetting(this.settings.notificationScale, SettingsCatalog.NOTIFICATION_SCALE_MIN, SettingsCatalog.NOTIFICATION_SCALE_MAX));
         DefaultCategory texts = new DefaultCategory("Тексты для проверки", wide, Icons.TEXT);
-        texts.addSetting(new TextListSetting(wide, this.settings.checkoutTexts, "Сообщения, отправляемые по /hm sendtexts", SettingsCatalog.MAX_TEXT_LENGTH));
+        texts.addSetting(new TextListSetting(wide, this.settings.checkoutTexts, SettingsCatalog.MAX_TEXT_LENGTH));
         this.categories.addCategory(auto);
-        this.categories.addCategory(checkout);
-        this.categories.addCategory(spy);
         this.categories.addCategory(chat);
+        this.categories.addCategory(spy);
+        this.categories.addCategory(checkout);
         this.categories.addCategory(indicatorHud);
-        this.categories.addCategory(obsCategory);
         this.categories.addCategory(notifications);
         this.categories.addCategory(journal);
         this.categories.addCategory(texts);
@@ -280,7 +285,8 @@ public class SettingsScreen extends AbstractScreen {
 
     @Override
     public void removed() {
-        super.removed();
+        this.appear.reset();
+        lastScreen = this;
         if (this.settings != null) {
             this.settings.saveSettings();
         }

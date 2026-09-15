@@ -8,13 +8,16 @@ import java.util.Optional;
 import me.zyouime.holymoderation.core.checkout.CheckoutJournal;
 import me.zyouime.holymoderation.core.checkout.CheckoutReason;
 import me.zyouime.holymoderation.core.command.Cmd;
+import me.zyouime.holymoderation.core.command.CommandErrors;
 import me.zyouime.holymoderation.core.command.Exec;
 import me.zyouime.holymoderation.core.command.ModCommand;
+import me.zyouime.holymoderation.core.service.CheckoutService;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.Text;
 
-public record StartCheckoutCommand(CheckoutJournal journal) implements ModCommand {
+public record StartCheckoutCommand(CheckoutService checkoutService, CheckoutJournal journal) implements ModCommand {
 
+    private static final String CHECKOUT_REASON_ARG = "причина_проверки";
     private static final SimpleCommandExceptionType UNKNOWN_REASON = Cmd.error("Неизвестная причина проверки.");
 
     @Override
@@ -24,18 +27,18 @@ public record StartCheckoutCommand(CheckoutJournal journal) implements ModComman
 
     @Override
     public void configure(LiteralArgumentBuilder<FabricClientCommandSource> node, Exec exec) {
-        node.then(Cmd.player("игрок")
-                .then(Cmd.choice("причина", CheckoutReason.apiValues())
-                        .executes(exec.of(context -> start(
-                                Cmd.str(context, "игрок"),
-                                Cmd.str(context, "причина"))))));
+        node.then(Cmd.choice(CHECKOUT_REASON_ARG, CheckoutReason.apiValues())
+                .executes(exec.of(context -> start(Cmd.str(context, CHECKOUT_REASON_ARG)))));
     }
 
-    private void start(String player, String rawReason) throws CommandSyntaxException {
+    private void start(String rawReason) throws CommandSyntaxException {
         Optional<CheckoutReason> reason = CheckoutReason.byApiValue(rawReason);
         if (reason.isEmpty()) {
             throw UNKNOWN_REASON.create();
         }
-        journal.start(player, reason.get());
+        if (!checkoutService.isChecking()) {
+            throw CommandErrors.NOT_CHECKING.create();
+        }
+        journal.start(checkoutService.suspect(), reason.get());
     }
 }

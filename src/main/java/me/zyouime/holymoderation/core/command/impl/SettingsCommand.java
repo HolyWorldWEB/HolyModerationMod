@@ -15,11 +15,11 @@ import me.zyouime.holymoderation.core.command.Exec;
 import me.zyouime.holymoderation.core.command.ModCommand;
 import me.zyouime.holymoderation.core.service.ChatService;
 import me.zyouime.holymoderation.core.service.NotificationsService;
-import me.zyouime.holymoderation.core.settings.entry.NumberEntry;
-import me.zyouime.holymoderation.core.settings.entry.SettingEntry;
-import me.zyouime.holymoderation.core.settings.SettingsEditor;
-import me.zyouime.holymoderation.core.settings.entry.TextEntry;
-import me.zyouime.holymoderation.core.settings.entry.ToggleEntry;
+import me.zyouime.holymoderation.core.command.settings.entry.NumberEntry;
+import me.zyouime.holymoderation.core.command.settings.entry.SettingEntry;
+import me.zyouime.holymoderation.core.command.settings.SettingsEditor;
+import me.zyouime.holymoderation.core.command.settings.entry.TextEntry;
+import me.zyouime.holymoderation.core.command.settings.entry.ToggleEntry;
 import me.zyouime.holymoderation.core.util.Colors;
 
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -84,7 +84,7 @@ public final class SettingsCommand implements ModCommand {
         SettingEntry<?> entry = lookup(key);
         editor.reset(entry);
         editor.flush();
-        notifications.success("%s: сброшено к значению по умолчанию.".formatted(entry.title()));
+        notifications.success("%s: сброшено к значению по умолчанию.".formatted(entry.setting().getName()));
     }
 
     private <T> void set(SettingEntry<T> entry, T value) throws CommandSyntaxException {
@@ -95,10 +95,11 @@ public final class SettingsCommand implements ModCommand {
     }
 
     private static String describe(SettingEntry<?> entry) {
+        String name = entry.setting().getName();
         return switch (entry) {
-            case ToggleEntry toggle -> "%s %s.".formatted(toggle.title(), toggle.agreement().describe(toggle.value()));
-            case TextEntry text -> "%s: %s".formatted(text.title(), text.display());
-            case NumberEntry number -> "%s: %d.".formatted(number.title(), number.value());
+            case ToggleEntry toggle -> "%s %s.".formatted(name, toggle.agreement().describe(toggle.value()));
+            case TextEntry text -> "%s: %s".formatted(name, text.display());
+            case NumberEntry number -> "%s: %d.".formatted(name, number.value());
         };
     }
 
@@ -136,7 +137,7 @@ public final class SettingsCommand implements ModCommand {
         for (SettingEntry<?> entry : entries.values()) {
             chatService.clientMessage(chatService.suggestTextComponent(
                     "%s%s%s: %s%s".formatted(Colors.GOLD, entry.key(), Colors.WHITE, Colors.GRAY, entry.display()),
-                    "%s\nНажмите, чтобы подставить команду изменения".formatted(entry.title()),
+                    "%s\nНажмите, чтобы подставить команду изменения".formatted(entry.setting().getName()),
                     "/hm settings %s ".formatted(entry.key())));
         }
     }

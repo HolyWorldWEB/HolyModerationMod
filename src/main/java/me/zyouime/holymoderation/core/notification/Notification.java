@@ -50,13 +50,6 @@ public final class Notification {
         return state != State.HIDING;
     }
 
-    public float phaseProgress(int phaseTicks) {
-        if (phaseTicks <= 0) {
-            return 1f;
-        }
-        return Math.min(1f, (float) elapsedTicks / phaseTicks);
-    }
-
     public enum State {
         SPAWNING,
         IDLE,

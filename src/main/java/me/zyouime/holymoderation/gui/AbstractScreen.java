@@ -1,9 +1,8 @@
 package me.zyouime.holymoderation.gui;
 
+import lombok.Setter;
 import me.zyouime.holymoderation.gui.widget.api.AbstractElement;
 import me.zyouime.holymoderation.gui.widget.api.Elements;
-import me.zyouime.holymoderation.render.animation.Animation;
-import me.zyouime.holymoderation.render.utils.ScissorStack;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.screen.Screen;
@@ -12,14 +11,14 @@ import net.minecraft.client.input.KeyInput;
 import net.minecraft.client.util.Window;
 import net.minecraft.text.Text;
 import org.joml.Matrix4fStack;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractScreen extends Screen {
 
-    protected final Screen parent;
+    @Setter
+    protected Screen parent;
     protected final List<AbstractElement> widgets = new ArrayList<>();
 
     public AbstractScreen(Screen parent) {
@@ -54,20 +53,6 @@ public abstract class AbstractScreen extends Screen {
         MinecraftClient client = MinecraftClient.getInstance();
         Window window = client.getWindow();
         return client.mouse.getScaledY(window);
-    }
-
-    protected static int modifiers(KeyInput input) {
-        int modifiers = 0;
-        if (input.hasCtrl()) {
-            modifiers |= GLFW.GLFW_MOD_CONTROL;
-        }
-        if (input.hasShift()) {
-            modifiers |= GLFW.GLFW_MOD_SHIFT;
-        }
-        if (input.hasAlt()) {
-            modifiers |= GLFW.GLFW_MOD_ALT;
-        }
-        return modifiers;
     }
 
     @Override
@@ -125,9 +110,8 @@ public abstract class AbstractScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyInput input) {
-        int modifiers = modifiers(input);
         for (AbstractElement widget : this.widgets) {
-            if (widget.keyPressed(input.getKeycode(), modifiers)) {
+            if (widget.keyPressed(input)) {
                 return true;
             }
         }
@@ -140,9 +124,8 @@ public abstract class AbstractScreen extends Screen {
 
     @Override
     public boolean keyReleased(KeyInput input) {
-        int modifiers = modifiers(input);
         for (AbstractElement widget : this.widgets) {
-            if (widget.keyReleased(input.getKeycode(), modifiers)) {
+            if (widget.keyReleased(input)) {
                 return true;
             }
         }
@@ -154,9 +137,8 @@ public abstract class AbstractScreen extends Screen {
         String typed = input.asString();
         boolean handled = false;
         for (int i = 0; i < typed.length(); i++) {
-            char chr = typed.charAt(i);
             for (AbstractElement widget : this.widgets) {
-                if (widget.charTyped(chr, 0)) {
+                if (widget.charTyped(new CharInput(typed.charAt(i), 0))) {
                     handled = true;
                     break;
                 }

@@ -4,7 +4,7 @@ import me.zyouime.holymoderation.Main;
 import me.zyouime.holymoderation.core.notification.Notification;
 import me.zyouime.holymoderation.core.notification.NotificationType;
 import me.zyouime.holymoderation.core.providers.MinecraftProvider;
-import me.zyouime.holymoderation.core.settings.SettingsCatalog;
+import me.zyouime.holymoderation.core.command.settings.SettingsCatalog;
 import me.zyouime.holymoderation.render.animation.Animation;
 import me.zyouime.holymoderation.render.builders.Builder;
 import me.zyouime.holymoderation.render.builders.states.QuadColorState;

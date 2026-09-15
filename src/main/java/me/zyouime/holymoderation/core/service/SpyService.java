@@ -35,13 +35,19 @@ public final class SpyService {
     }
 
     public void endSpy() {
+        endSpy(true);
+    }
+
+    public void endSpy(boolean sendNotification) {
         if (session == null) {
             return;
         }
         hideTailTicks = session.isAwaitingResponse() ? HIDE_TAIL_TICKS : 0;
         session = null;
         ticksUntilUpdate = -1;
-        notificationsService.success("Слежка остановлена.");
+        if (sendNotification) {
+            notificationsService.success("Слежка остановлена.");
+        }
     }
 
     public boolean isSpying() {

@@ -15,6 +15,8 @@ import me.zyouime.holymoderation.render.builders.states.SizeState;
 import me.zyouime.holymoderation.render.renderers.impl.BuiltBorder;
 import me.zyouime.holymoderation.render.renderers.impl.BuiltRectangle;
 import me.zyouime.holymoderation.render.utils.ScissorStack;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 import org.joml.Matrix4fStack;
 
 import java.util.Objects;
@@ -259,12 +261,12 @@ public class OptionsListWidget<T> extends ListWidget<OptionsListWidget.OptionsLi
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int modifiers) {
+    public boolean keyPressed(KeyInput input) {
         return false;
     }
 
     @Override
-    public boolean charTyped(char chr, int modifiers) {
+    public boolean charTyped(CharInput input) {
         return false;
     }
 

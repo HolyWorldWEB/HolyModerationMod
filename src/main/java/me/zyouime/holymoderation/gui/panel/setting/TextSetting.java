@@ -14,12 +14,12 @@ public class TextSetting extends PanelSetting<String> {
     private int maxLength = 256;
     private SimpleTextFieldWidget field;
 
-    public TextSetting(Setting<String> setting, String settingName) {
-        this(DEFAULT_WIDTH, 38.0f, setting, settingName);
+    public TextSetting(Setting<String> setting) {
+        this(DEFAULT_WIDTH, 38.0f, setting);
     }
 
-    public TextSetting(float width, float height, Setting<String> setting, String settingName) {
-        super(width, height, setting, settingName);
+    public TextSetting(float width, float height, Setting<String> setting) {
+        super(width, height, setting);
     }
 
     public TextSetting placeholder(String placeholder) {

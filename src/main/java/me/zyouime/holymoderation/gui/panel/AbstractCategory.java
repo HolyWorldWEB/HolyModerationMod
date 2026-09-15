@@ -6,6 +6,8 @@ import me.zyouime.holymoderation.gui.widget.api.AbstractElement;
 import me.zyouime.holymoderation.gui.widget.api.Animated;
 import me.zyouime.holymoderation.gui.widget.api.Elements;
 import me.zyouime.holymoderation.gui.widget.api.Expandable;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,9 +62,9 @@ public abstract class AbstractCategory extends AbstractElement implements Animat
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int modifiers) {
+    public boolean keyPressed(KeyInput input) {
         for (PanelSetting<?> setting : this.settings) {
-            if (setting.keyPressed(keyCode, modifiers)) {
+            if (setting.keyPressed(input)) {
                 return true;
             }
         }
@@ -70,9 +72,9 @@ public abstract class AbstractCategory extends AbstractElement implements Animat
     }
 
     @Override
-    public boolean keyReleased(int keyCode, int modifiers) {
+    public boolean keyReleased(KeyInput input) {
         for (PanelSetting<?> setting : this.settings) {
-            if (setting.keyReleased(keyCode, modifiers)) {
+            if (setting.keyReleased(input)) {
                 return true;
             }
         }
@@ -80,9 +82,9 @@ public abstract class AbstractCategory extends AbstractElement implements Animat
     }
 
     @Override
-    public boolean charTyped(char chr, int modifiers) {
+    public boolean charTyped(CharInput input) {
         for (PanelSetting<?> setting : this.settings) {
-            if (setting.charTyped(chr, modifiers)) {
+            if (setting.charTyped(input)) {
                 return true;
             }
         }

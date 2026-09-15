@@ -1,10 +1,10 @@
-package me.zyouime.holymoderation.core.settings.entry;
+package me.zyouime.holymoderation.core.command.settings.entry;
 
 import java.util.Optional;
 
 import me.zyouime.holymoderation.config.setting.Setting;
 
-public record NumberEntry(String key, String title, Setting<Integer> setting, int min, int max) implements SettingEntry<Integer> {
+public record NumberEntry(String key,Setting<Integer> setting, int min, int max) implements SettingEntry<Integer> {
 
     @Override
     public Optional<String> validate(Integer value) {

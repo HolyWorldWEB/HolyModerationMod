@@ -39,7 +39,7 @@ public final class CheckoutModule extends Module {
                 new UnfreezeCommand(service, "unfreezing"),
                 new UnfreezeCommand(service, "unfrz"),
                 new SendTextsCommand(service, userState),
-                new StartCheckoutCommand(checkoutJournal),
+                new StartCheckoutCommand(service, checkoutJournal),
                 new SbanCommand(punishmentService, service),
                 new EndCheckoutCommand(service, checkoutJournal, banReasonLookup, checkoutPrompts));
     }

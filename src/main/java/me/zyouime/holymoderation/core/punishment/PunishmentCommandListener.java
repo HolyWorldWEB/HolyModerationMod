@@ -22,7 +22,7 @@ public final class PunishmentCommandListener {
     private final ConfirmationGate suspectGate = new ConfirmationGate();
 
     public ActionResult onCommand(String command) {
-        Optional<PunishmentType> type = PunishmentType.byCommand(command.split(" ", 2)[0]);
+        Optional<PunishmentType> type = PunishmentType.byCommand(command);
         if (type.isEmpty()) {
             strangeNickGate.invalidateUnless(command);
             suspectGate.invalidateUnless(command);
@@ -44,6 +44,10 @@ public final class PunishmentCommandListener {
             return;
         }
         Punishment punishment = result.punishment();
+        if (punishment.type() == PunishmentType.NVP_BAN) {
+            punishmentService.punishNVP(punishment.player());
+            return;
+        }
         String player = punishment.player();
         if (!isNicknameValid(player)) {
             notifications.error("Некорректный никнейм.");

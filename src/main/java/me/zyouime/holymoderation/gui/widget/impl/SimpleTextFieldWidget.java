@@ -16,6 +16,8 @@ import me.zyouime.holymoderation.render.renderers.impl.BuiltText;
 import me.zyouime.holymoderation.render.utils.ScissorStack;
 import me.zyouime.holymoderation.resources.Fonts;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.util.StringHelper;
 import org.joml.Matrix4fStack;
 import org.lwjgl.glfw.GLFW;
@@ -179,12 +181,12 @@ public class SimpleTextFieldWidget extends AbstractElement {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int modifiers) {
+    public boolean keyPressed(KeyInput input) {
         if (!this.focused || !this.active) {
             return false;
         }
-        if ((modifiers & GLFW.GLFW_MOD_CONTROL) != 0) {
-            switch (keyCode) {
+        if ((input.modifiers() & GLFW.GLFW_MOD_CONTROL) != 0) {
+            switch (input.getKeycode()) {
                 case GLFW.GLFW_KEY_A -> {
                     this.allSelected = true;
                     return true;
@@ -211,7 +213,7 @@ public class SimpleTextFieldWidget extends AbstractElement {
                 }
             }
         }
-        switch (keyCode) {
+        switch (input.getKeycode()) {
             case GLFW.GLFW_KEY_ESCAPE, GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_KP_ENTER -> {
                 this.focused = false;
                 this.allSelected = false;
@@ -236,14 +238,14 @@ public class SimpleTextFieldWidget extends AbstractElement {
     }
 
     @Override
-    public boolean charTyped(char chr, int modifiers) {
+    public boolean charTyped(CharInput input) {
         if (!this.active || !this.focused) {
             return false;
         }
-        if (!isAllowed(chr)) {
+        if (!input.isValidChar()) {
             return false;
         }
-        this.insert(String.valueOf(chr));
+        this.insert(input.asString());
         return true;
     }
 
