@@ -61,10 +61,6 @@ public final class ChatService {
         return text;
     }
 
-    public String formatLocation(String location) {
-        return HolyWorldPatterns.formatLocation(location);
-    }
-
     public void copyToClipboard(String text) {
         MinecraftProvider.client().keyboard.setClipboard(text);
     }

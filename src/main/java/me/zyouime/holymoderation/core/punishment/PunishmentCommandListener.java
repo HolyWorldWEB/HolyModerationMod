@@ -6,6 +6,7 @@ import me.zyouime.holymoderation.core.service.CheckoutService;
 import me.zyouime.holymoderation.core.service.NotificationsService;
 import me.zyouime.holymoderation.core.service.PunishmentService;
 import me.zyouime.holymoderation.core.util.Colors;
+import me.zyouime.holymoderation.core.util.HolyWorldPatterns;
 import net.minecraft.util.ActionResult;
 
 @RequiredArgsConstructor
@@ -44,13 +45,13 @@ public final class PunishmentCommandListener {
             return;
         }
         Punishment punishment = result.punishment();
-        if (punishment.type() == PunishmentType.NVP_BAN) {
-            punishmentService.punishNVP(punishment.player());
-            return;
-        }
         String player = punishment.player();
         if (!isNicknameValid(player)) {
             notifications.error("Некорректный никнейм.");
+            return;
+        }
+        if (punishment.type() == PunishmentType.NVP_BAN) {
+            punishmentService.punishNVP(player);
             return;
         }
         if (!passesStrangeNickGate(player, command) || !passesSuspectGate(player, command)) {

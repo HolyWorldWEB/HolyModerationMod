@@ -43,6 +43,7 @@ public class SimpleTextFieldWidget extends AbstractElement {
     private int firstCharIndex;
     private boolean allSelected;
     private double cursorBlinkStart = System.currentTimeMillis();
+    @Setter private boolean masked;
     private final BuiltBorder border;
     private final BuiltRectangle background;
     private final BuiltRectangle selection;
@@ -103,7 +104,8 @@ public class SimpleTextFieldWidget extends AbstractElement {
         this.firstCharIndex = Math.min(this.firstCharIndex, this.text.length());
         String visible = this.text.substring(this.firstCharIndex);
         boolean empty = this.text.isEmpty();
-        this.textRender.setText(empty ? this.placeholder : visible);
+        String finalRenderText = masked ? "*".repeat(visible.length()) : visible;
+        this.textRender.setText(empty ? this.placeholder : finalRenderText);
         this.textRender.setColor(empty ? GuiColors.TEXT_FAINT : (this.focused ? GuiColors.TEXT : GuiColors.withAlpha(GuiColors.TEXT, 190)));
         float textX = this.x + 4.0f;
         float textY = this.y + (this.height - this.textRender.getLineHeight()) / 2.0f;

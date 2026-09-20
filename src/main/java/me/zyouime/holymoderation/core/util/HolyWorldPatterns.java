@@ -47,7 +47,7 @@ public final class HolyWorldPatterns {
     public static final String HISTORY_KICK_MARK = "был кикнут";
     public static final String HISTORY_MUTE_MARK = "был замьючен";
     public static final String HISTORY_PLAYER_WAS = " был ";
-    public static final String NO_FOUND_OR_NO_PERMISSION = "Команды не существует или у Вас нет доступа к ней, используй /help для помощи.";
+    public static final String NO_FOUND_OR_NO_PERMISSION = "Команды не существует или у Вас нет доступа к ней";
     public static final String ALL_PREFIX = "[ALL] ";
     private static final char[] CHAT_MARKERS = {'ʟ', 'ɢ'};
     private static final char CHANNEL_SEPARATOR = '|';
@@ -58,7 +58,7 @@ public final class HolyWorldPatterns {
     }
 
     public static boolean isNoCommandOrAccess(String text) {
-        return text.startsWith(NO_FOUND_OR_NO_PERMISSION);
+        return text.toLowerCase().startsWith(NO_FOUND_OR_NO_PERMISSION.toLowerCase());
     }
 
     public static boolean isFreezeLeave(String text, String nickname) {
@@ -173,46 +173,25 @@ public final class HolyWorldPatterns {
         if (!currentLine.startsWith(PLAYTIME_CURRENT_PREFIX)) {
             return null;
         }
-        String loc = currentLine.split(": ")[1];
+        String[] split = currentLine.split(": ");
+        if (split.length < 2) {
+            return null;
+        }
+        String loc = split[1];
         return loc.substring(1, loc.length() - 1);
     }
 
     public static String extractPlaytimeActivity(String lastLine) {
         if (!lastLine.startsWith(PLAYTIME_LAST_PREFIX)) return null;
-        return lastLine.split(": ")[1];
-    }
-
-    public static String formatLocation(String location) {
-        switch (location) {
-            case LOC_LITE120_FULL -> {
-                return "lite120-1";
-            }
-            case LOC_LITE_FULL -> {
-                return "lite-1";
-            }
-            case LOC_CLASSIC_FULL -> {
-                return "classic-1";
-            }
-            case LOC_LPVP -> {
-                return "lpvp";
-            }
+        String[] split = lastLine.split(": ");
+        if (split.length < 2) {
+            return null;
         }
-        if (location.startsWith("l2")) {
-            return "lite120-%s".formatted(location.split(LOC_SUFFIX)[1]);
-        }
-        if (location.startsWith("l")) {
-            return "lite-%s".formatted(location.split(LOC_SUFFIX)[1]);
-        }
-        return "classic-%s".formatted(location.split(LOC_SUFFIX)[1]);
+        return split[1];
     }
 
     public static boolean isCheckbanAbort(String text) {
         return text.equals(CHECKBAN_CLEAN_TARGET) || text.equals(CHECKBAN_CLEAN_HISTORY);
-    }
-
-    public static String extractBanReason(String reasonLine) {
-        if (!reasonLine.startsWith(CHECKBAN_REASON_PREFIX)) return null;
-        return reasonLine.split("Причина: ")[1].split(" \\| ")[0];
     }
 
     public static boolean isHistoryMessage(String message) {
@@ -221,6 +200,20 @@ public final class HolyWorldPatterns {
                 || message.startsWith(HISTORY_ENDING_PREFIX + " через")
                 || message.startsWith(HISTORY_UNBANNED_PREFIX) || message.startsWith(HISTORY_UNMUTED_PREFIX)
                 || message.trim().isEmpty();
+    }
+
+    public static String extractBanReason(String reasonLine) {
+        if (!reasonLine.startsWith(CHECKBAN_REASON_PREFIX)) return null;
+        String[] reasonSplit = reasonLine.split("Причина: ");
+        if (reasonSplit.length < 2) {
+            return null;
+        }
+        String reason = reasonSplit[1];
+        String[] split = reason.split(" \\| ");
+        if (split.length < 1) {
+            return null;
+        }
+        return split[0];
     }
 
     public static boolean isNoHistory(List<String> lines) {

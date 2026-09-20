@@ -201,7 +201,8 @@ public class SettingsScreen extends AbstractScreen {
         DefaultCategory journal = new DefaultCategory("Журнал", wide, Icons.FILE);
         journal.addSetting(new TextSetting(wide, 38.0f, this.settings.apiToken)
                 .maxLength(SettingsCatalog.MAX_TEXT_LENGTH)
-                .placeholder("не задан"));
+                .placeholder("не задан"))
+                .masked(true);
         journal.addSetting(new TextSetting(wide, 38.0f, this.settings.vkLink)
                 .maxLength(SettingsCatalog.MAX_TEXT_LENGTH)
                 .placeholder("https://vk.com/"));

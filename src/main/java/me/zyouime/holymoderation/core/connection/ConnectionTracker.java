@@ -1,5 +1,7 @@
 package me.zyouime.holymoderation.core.connection;
 
+import java.util.Locale;
+import java.util.Set;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import me.zyouime.holymoderation.Main;
@@ -20,20 +22,25 @@ import net.minecraft.world.GameMode;
 @RequiredArgsConstructor
 public final class ConnectionTracker {
 
-    private static final Pattern HOLYWORLD = Pattern.compile("(?i).*holl?yworld.*");
     private final UserState userState;
     private ClientConnection connection;
     private final ModuleManager manager;
     private final NotificationsService notificationsService;
+    private static final Set<String> HW_HOST_SUFFIXES = Set.of(
+            "holyworld.me",
+            "holyworld.ru",
+            "holyworld.io");
+
 
     public void onGameJoin(ClientPlayNetworkHandler handler) {
         boolean sameConnection = handler.getConnection() == connection;
         connection = handler.getConnection();
         String address = resolveAddress(handler);
-        boolean onHolyWorld = HOLYWORLD.matcher(address).matches();
+        boolean onHolyWorld = isHolyWorldAddress(address);
         manager.toggle(onHolyWorld);
         if (!onHolyWorld) {
             notificationsService.warning("Вы находитесь не на HolyWorld. Мод будет выключен");
+            userState.reset();
             return;
         }
         userState.setHacAlertsEnabled(false);
@@ -91,5 +98,14 @@ public final class ConnectionTracker {
             return "";
         }
         return player.getGameProfile().name();
+    }
+
+    private static boolean isHolyWorldAddress(String address) {
+        try {
+            String host = address.split(":")[0].toLowerCase(Locale.ROOT);
+            return HW_HOST_SUFFIXES.stream().anyMatch(host::endsWith);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

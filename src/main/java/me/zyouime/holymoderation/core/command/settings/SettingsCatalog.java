@@ -36,7 +36,7 @@ public final class SettingsCatalog {
                 new ToggleEntry("copy", Agreement.FEMININE, settings.copyButton),
                 new TextEntry("copytext", settings.copyButtonText, MAX_TEXT_LENGTH, false),
                 new TextEntry("marker", settings.playerMarker, MAX_TEXT_LENGTH, false),
-                new TextEntry("apitoken", settings.apiToken, MAX_TEXT_LENGTH, false),
+                new TextEntry("apitoken", settings.apiToken, MAX_TEXT_LENGTH, true),
                 new ToggleEntry("checkouthud", Agreement.FEMININE, settings.checkoutHudEnabled),
 
 //                new ToggleEntry("obs", "Запись проверок в OBS", Agreement.FEMININE, settings.obsEnabled),

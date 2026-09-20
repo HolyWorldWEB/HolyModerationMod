@@ -2,6 +2,7 @@ package me.zyouime.holymoderation.core.checkout;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 import me.zyouime.holymoderation.core.api.JournalApi;
@@ -17,6 +18,7 @@ import me.zyouime.holymoderation.core.states.UserState;
 public record CheckoutJournal(JournalApi journalApi, UserState userState, ModeratorService moderatorService, NotificationsService notifications, LoggerService logger) {
 
     private static final int LPVP_SERVER_NUMBER = 1;
+    private static final AtomicBoolean inFlight = new AtomicBoolean(false);
 
     public void start(String player, CheckoutReason reason) {
         ServerLocation location = userState.getUserLocation();
@@ -34,17 +36,25 @@ public record CheckoutJournal(JournalApi journalApi, UserState userState, Modera
     }
 
     private void run(boolean expectNoActive, String successMessage, String conflictMessage, Supplier<CompletableFuture<Void>> action) {
-        journalApi.hasActiveCheckout().thenCompose(active -> {
-                    if (active == expectNoActive) {
-                        notifications.error(conflictMessage);
-                        return CompletableFuture.completedFuture(null);
-                    }
-                    return action.get().thenRun(() -> notifications.success(successMessage));
-                })
-                .exceptionally(throwable -> {
-                    notifications.error("Ошибка журнала: %s".formatted(throwable.getMessage()));
-                    return null;
-                });
+        if (!inFlight.compareAndSet(false, true)) {
+            notifications.error("Предыдущая операция с журналом ещё выполняется.");
+            return;
+        }
+        try {
+            journalApi.hasActiveCheckout().thenCompose(active -> {
+                if (active == expectNoActive) {
+                    notifications.error(conflictMessage);
+                    return CompletableFuture.completedFuture(null);
+                }
+                return action.get().thenRun(() -> notifications.success(successMessage));
+            }).exceptionally(throwable -> {
+                notifications.error("Ошибка журнала: %s".formatted(throwable.getMessage()));
+                return null;
+            }).whenComplete((result, throwable) -> inFlight.set(false));
+        } catch (RuntimeException e) {
+            inFlight.set(false);
+            notifications.error(e.getMessage());
+        }
     }
 
     private CheckoutRequest toRequest(String player, CheckoutReason reason, ServerLocation location) {

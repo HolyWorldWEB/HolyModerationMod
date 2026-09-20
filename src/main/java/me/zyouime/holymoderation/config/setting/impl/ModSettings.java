@@ -4,6 +4,7 @@ import me.zyouime.holymoderation.config.ModConfig;
 import me.zyouime.holymoderation.config.setting.AbstractSettings;
 import me.zyouime.holymoderation.config.setting.Setting;
 import me.zyouime.holymoderation.config.setting.SettingsTypes;
+import me.zyouime.holymoderation.core.service.LoggerService;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public final class ModSettings extends AbstractSettings {
     public final Setting<Boolean> dupeIp = registerSetting(Setting.of("dupeIp", SettingsTypes.BOOLEAN, false, "Авто /dupeip"));
     public final Setting<Boolean> autoAnyDesk = registerSetting(Setting.of("autoAnyDesk", SettingsTypes.BOOLEAN, true, "Копирование анидеска"));
     public final Setting<Boolean> autoCheckoutTp = registerSetting(Setting.of("autoCheckoutTp", SettingsTypes.BOOLEAN, true, "Телепорт на /warp logo"));
-    public final Setting<Integer> spyDelay = registerSetting(Setting.of("spyDelay", SettingsTypes.INTEGER, 2, "Частота обновления слежки (сек)"));
+    public final Setting<Integer> spyDelay = registerSetting(Setting.of("spyDelay", SettingsTypes.INTEGER, 2, "Частота обновления (сек)"));
     public final Setting<Boolean> autoSpyTp = registerSetting(Setting.of("autoSpyTp", SettingsTypes.BOOLEAN, false, "Телепорт при слежке"));
     public final Setting<String> vkLink = registerSetting(Setting.of("vkLink", SettingsTypes.STRING, "", "Ссылка на ВК"));
     public final Setting<Boolean> spyHudEnabled = registerSetting(Setting.of("spyHudEnabled", SettingsTypes.BOOLEAN, true, "Плашка слежки"));
@@ -35,7 +36,7 @@ public final class ModSettings extends AbstractSettings {
     public final Setting<Float> checkoutHudY = registerSetting(Setting.of("checkoutHudY", SettingsTypes.FLOAT, 0.18f, ""));
     public final Setting<List<String>> checkoutTexts = registerSetting(Setting.of("checkoutTexts", SettingsTypes.LIST_STRING, List.of(), "Сообщения, отправляемые по /hm sendtexts"));
 
-    public ModSettings() {
-        super(ModConfig.getConfigFile("holymoderation"), ModConfig.DEFAULT_GSON);
+    public ModSettings(LoggerService service) {
+        super(ModConfig.getConfigFile("holymoderation"), ModConfig.DEFAULT_GSON, service);
     }
 }

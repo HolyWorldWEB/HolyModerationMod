@@ -34,10 +34,10 @@ public record ModContext(
         ModuleManager moduleManager) {
 
     public static ModContext createContext() {
-        ModSettings modSettings = new ModSettings();
+        LoggerService loggerService = new LoggerService();
+        ModSettings modSettings = new ModSettings(loggerService);
         modSettings.loadSettings();
         ChatService chatService = new ChatService(modSettings);
-        LoggerService loggerService = new LoggerService();
         UserState userState = new UserState();
         NotificationsService notificationsService = new NotificationsService();
         SpyService spyService = new SpyService(userState, chatService, modSettings, notificationsService);

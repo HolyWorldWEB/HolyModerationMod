@@ -23,15 +23,9 @@ public final class PunishmentTime {
     }
 
     public static boolean looksLikeNumber(String value) {
-        if (value == null || value.length() < 2) {
-            return false;
-        }
-        String unit = value.substring(value.length() - 1);
-        if (unit.matches(UNIT_PATTERN)) {
-            return false;
-        }
-        return isPositiveNumber(value.substring(0, value.length() - 1));
+        return value != null && value.matches("(?i)\\d{2,}[smhd]?");
     }
+
 
     private static boolean isPositiveNumber(String value) {
         if (value.isEmpty()) {

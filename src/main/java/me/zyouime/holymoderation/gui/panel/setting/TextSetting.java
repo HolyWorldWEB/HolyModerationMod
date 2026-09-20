@@ -12,6 +12,7 @@ public class TextSetting extends PanelSetting<String> {
     private String placeholder = "";
     private boolean colorCodes;
     private int maxLength = 256;
+    private boolean masked;
     private SimpleTextFieldWidget field;
 
     public TextSetting(Setting<String> setting) {
@@ -20,6 +21,11 @@ public class TextSetting extends PanelSetting<String> {
 
     public TextSetting(float width, float height, Setting<String> setting) {
         super(width, height, setting);
+    }
+
+    public TextSetting masked(boolean masked) {
+        this.masked = masked;
+        return this;
     }
 
     public TextSetting placeholder(String placeholder) {
@@ -54,6 +60,7 @@ public class TextSetting extends PanelSetting<String> {
         this.field = new SimpleTextFieldWidget(0.0f, 0.0f, this.width - SIDE_PADDING * 2.0f, FIELD_HEIGHT, null);
         this.field.setPlaceholder(this.placeholder);
         this.field.setMaxLength(this.maxLength);
+        this.field.setMasked(this.masked);
         this.field.setText(this.toDisplay(this.getSetting() == null ? "" : this.getSetting().getValue()));
         this.field.setCallback(text -> {
             if (this.getSetting() != null) {
