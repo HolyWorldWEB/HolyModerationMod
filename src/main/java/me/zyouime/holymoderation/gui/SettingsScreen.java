@@ -11,6 +11,7 @@ import me.zyouime.holymoderation.gui.panel.setting.BooleanSetting;
 import me.zyouime.holymoderation.gui.panel.setting.SliderSetting;
 import me.zyouime.holymoderation.gui.panel.setting.TextListSetting;
 import me.zyouime.holymoderation.gui.panel.setting.TextSetting;
+import me.zyouime.holymoderation.render.animation.Animation;
 import me.zyouime.holymoderation.render.animation.impl.EaseOut;
 import me.zyouime.holymoderation.render.builders.Builder;
 import me.zyouime.holymoderation.render.builders.states.QuadColorState;
@@ -23,6 +24,7 @@ import me.zyouime.holymoderation.render.utils.BufferRenderer;
 import me.zyouime.holymoderation.resources.Fonts;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.Window;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.MathHelper;
 import org.joml.Matrix4fStack;
 
@@ -45,6 +47,7 @@ public class SettingsScreen extends AbstractScreen {
     private static final float ICON_BACK_SIZE = 24f;
     private final ModSettings settings;
     private final EaseOut appear = new EaseOut(15f);
+    private final EaseOut disappear = new EaseOut(3f);
     private CategoryListWidget categories;
     private BuiltRectangle backdrop;
     private BuiltRectangle card;
@@ -56,6 +59,8 @@ public class SettingsScreen extends AbstractScreen {
     private BuiltText hint;
     private BuiltText icon;
     private boolean initialized;
+    private boolean openingPending;
+    private ClientWorld animationWorld;
     private static SettingsScreen lastScreen;
 
     public SettingsScreen(Screen parent, ModSettings settings) {
@@ -238,14 +243,51 @@ public class SettingsScreen extends AbstractScreen {
     }
 
     @Override
+    public void onDisplayed() {
+        super.onDisplayed();
+        this.openingPending = true;
+    }
+
+    @Override
+    public void close() {
+        if (this.closing) return;
+        if (!Animation.isEnabled() || this.openingPending || this.appear.isReset()) {
+            super.close();
+            return;
+        }
+        this.disappear.reset();
+        this.closing = true;
+    }
+
+    @Override
     public void customRender(Matrix4fStack matrices, double mouseX, double mouseY, float delta) {
         if (this.categories == null) {
             return;
         }
-        this.appear.update();
-        float progress = this.appear.getAnimation();
+        if (this.closing) {
+            this.disappear.update();
+            if (this.disappear.isFinished()) {
+                super.close();
+                return;
+            }
+        } else {
+            ClientWorld world = MinecraftProvider.world();
+            if (this.openingPending || this.animationWorld != world) {
+                this.openingPending = false;
+                this.animationWorld = world;
+                this.appear.reset();
+            }
+            this.appear.update();
+        }
+        float fade = 1.0f - this.disappear.getAnimation();
+        float progress = this.appear.getAnimation() * fade;
         this.backdrop.setSize(new SizeState(window().getScaledWidth(), window().getScaledHeight()));
-        this.backdrop.render(matrices, 0.0f, 0.0f);
+        BufferRenderer.pushAlpha(fade);
+        try {
+            this.backdrop.render(matrices, 0.0f, 0.0f);
+        } finally {
+            BufferRenderer.popAlpha();
+        }
         float x = cardX();
         float y = cardY();
         float width = cardWidth();
@@ -286,7 +328,9 @@ public class SettingsScreen extends AbstractScreen {
 
     @Override
     public void removed() {
-        this.appear.reset();
+        this.disappear.reset();
+        this.closing = false;
+        this.animationWorld = null;
         lastScreen = this;
         if (this.settings != null) {
             this.settings.saveSettings();

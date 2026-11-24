@@ -9,7 +9,7 @@ public enum ServerType {
 
     CLASSIC("anarchy", "classic", "anarchy"),
     LITE("lanarchy", "lite", "lite-anarchy"),
-    LITE120("l2anarchy", "lite120", "lite120-anarchy"),
+    LITE121("l21anarchy", "lite121", "lite121-anarchy"),
     LPVP("lpvp", "lpvp", "lpvp"),
     PRIME("prime", "prime", "prime"),
     LOBBY("lobby", "lobby", "lobby");

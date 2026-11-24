@@ -16,7 +16,7 @@ public record ServerLocation(ServerType type, int number) {
             return Optional.empty();
         }
         String normalized = display.trim().toLowerCase();
-        return matchDisplay(normalized, ServerType.LITE120)
+        return matchDisplay(normalized, ServerType.LITE121)
                 .or(() -> matchDisplay(normalized, ServerType.LITE))
                 .or(() -> matchDisplay(normalized, ServerType.CLASSIC))
                 .or(() -> matchDisplay(normalized, ServerType.LPVP))
@@ -61,7 +61,7 @@ public record ServerLocation(ServerType type, int number) {
         if (normalized.startsWith(ServerType.LPVP.getRawPrefix())) {
             return Optional.of(of(ServerType.LPVP));
         }
-        return parseNumbered(normalized, ServerType.LITE120).or(()-> parseNumbered(normalized, ServerType.PRIME)).or(() -> parseNumbered(normalized, ServerType.LITE)).or(() -> parseNumbered(normalized, ServerType.CLASSIC));
+        return parseNumbered(normalized, ServerType.LITE121).or(()-> parseNumbered(normalized, ServerType.PRIME)).or(() -> parseNumbered(normalized, ServerType.LITE)).or(() -> parseNumbered(normalized, ServerType.CLASSIC));
     }
 
     private static Optional<ServerLocation> parseNumbered(String normalized, ServerType type) {

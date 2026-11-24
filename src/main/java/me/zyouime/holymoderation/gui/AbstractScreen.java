@@ -20,6 +20,7 @@ public abstract class AbstractScreen extends Screen {
     @Setter
     protected Screen parent;
     protected final List<AbstractElement> widgets = new ArrayList<>();
+    protected boolean closing;
 
     public AbstractScreen(Screen parent) {
         super(Text.empty());
@@ -57,6 +58,7 @@ public abstract class AbstractScreen extends Screen {
 
     @Override
     public boolean mouseClicked(Click click, boolean doubled) {
+        if (this.closing) return true;
         double mouseX = this.mouseX();
         double mouseY = this.mouseY();
         for (AbstractElement widget : Elements.expandedFirst(this.widgets)) {
@@ -81,6 +83,7 @@ public abstract class AbstractScreen extends Screen {
 
     @Override
     public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+        if (this.closing) return true;
         double mouseX = this.mouseX();
         double mouseY = this.mouseY();
         for (AbstractElement widget : this.widgets) {
@@ -93,6 +96,7 @@ public abstract class AbstractScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        if (this.closing) return true;
         for (AbstractElement widget : Elements.expandedFirst(this.widgets)) {
             if (widget.mouseScrolled(mouseX, mouseY, verticalAmount)) {
                 return true;
@@ -110,6 +114,7 @@ public abstract class AbstractScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyInput input) {
+        if (this.closing) return true;
         for (AbstractElement widget : this.widgets) {
             if (widget.keyPressed(input)) {
                 return true;
@@ -134,6 +139,7 @@ public abstract class AbstractScreen extends Screen {
 
     @Override
     public boolean charTyped(CharInput input) {
+        if (this.closing) return true;
         String typed = input.asString();
         boolean handled = false;
         for (int i = 0; i < typed.length(); i++) {

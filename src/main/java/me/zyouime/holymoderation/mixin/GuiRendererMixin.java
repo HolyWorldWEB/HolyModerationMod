@@ -22,21 +22,32 @@ public abstract class GuiRendererMixin {
 
     @Unique
     private Matrix4fStack matrices;
+    @Unique
+    private long holymoderation$lastHudFrame;
+    @Unique
+    private long holymoderation$lastOverlayFrame;
 
     @Inject(method = "render(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)V", at = @At("HEAD"))
     private void renderHead(GpuBufferSlice fogBuffer, CallbackInfo ci) {
         matrices = new Matrix4fStack(16);
-        Animation.tick();
         ScissorStack.clear();
     }
 
     @Inject(method = "renderPreparedDraws", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;render(Ljava/util/function/Supplier;Lnet/minecraft/client/gl/Framebuffer;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lcom/mojang/blaze3d/buffers/GpuBuffer;Lcom/mojang/blaze3d/vertex/VertexFormat$IndexType;II)V", ordinal = 0, shift = At.Shift.AFTER))
     private void renderBeforeBlur(GpuBufferSlice fogBuffer, CallbackInfo ci) {
+        long frame = Animation.frameNanos();
+        if (holymoderation$lastHudFrame == frame) return;
+        Animation.useLayerDelta(holymoderation$lastHudFrame);
+        holymoderation$lastHudFrame = frame;
         Huds.render(matrices);
     }
 
     @Inject(method = "render(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;renderPreparedDraws(Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)V", shift = At.Shift.AFTER))
     private void renderCustomLayer(GpuBufferSlice fogBuffer, CallbackInfo ci) {
+        long frame = Animation.frameNanos();
+        if (holymoderation$lastOverlayFrame == frame) return;
+        Animation.useLayerDelta(holymoderation$lastOverlayFrame);
+        holymoderation$lastOverlayFrame = frame;
         MinecraftClient client = MinecraftProvider.client();
         float delta = client.getRenderTickCounter().getDynamicDeltaTicks();
         NotificationRenderer.render(matrices, delta);

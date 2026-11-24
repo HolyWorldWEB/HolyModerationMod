@@ -9,6 +9,7 @@
     "AbstractTextureMixin",
     "ChatScreenMixin",
     "ClientPlayNetworkHandlerMixin",
+    "GameRendererMixin",
     "GuiRendererMixin",
     "HandledScreenMixin",
     "MessageHandlerMixin"
